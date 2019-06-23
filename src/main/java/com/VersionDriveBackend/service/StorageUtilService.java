@@ -37,21 +37,21 @@ public class StorageUtilService implements ConstantUtils {
     }
   }
 
-	public Resource loadFile(String filename,long userid) {
-    try {
-    	UserStuff userObject = userRepository.getOne(userid);
-    	Path locationOfFile = Paths.get(ROOT_DIR+"/"+userid+"@"+userObject.getUsername());
-      Path file = locationOfFile.resolve(filename);
-      Resource resource = new UrlResource(file.toUri());
-      if (resource.exists() || resource.isReadable()) {
-        return resource;
-      } else {
-        throw new RuntimeException("FAIL!");
-      }
-    } catch (MalformedURLException e) {
-      throw new RuntimeException("FAIL!");
-    }
-  }
+//	public Resource loadFile(String filename,long userid) {
+//    try {
+//    	UserStuff userObject = userRepository.getOne(userid);
+//    	Path locationOfFile = Paths.get(ROOT_DIR+"/"+userid+"@"+userObject.getUsername());
+//      Path file = locationOfFile.resolve(filename);
+//      Resource resource = new UrlResource(file.toUri());
+//      if (resource.exists() || resource.isReadable()) {
+//        return resource;
+//      } else {
+//        throw new RuntimeException("FAIL!");
+//      }
+//    } catch (MalformedURLException e) {
+//      throw new RuntimeException("FAIL!");
+//    }
+//  }
 
 	public void deleteAll(long userid) {
 		UserStuff userObject = userRepository.getOne(userid);

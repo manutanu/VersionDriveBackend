@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -27,7 +29,6 @@ public class Share {
 	@Column(name="toid")
 	private long toid;
 	
-	@CreatedDate
 	@Column(name="creationDate")
 	private Date creationDate;
 	
@@ -36,6 +37,12 @@ public class Share {
 	
 	@ManyToOne
 	private FileStuff fileshare;
+	
+	@PrePersist
+	  protected void onCreate() {
+	    creationDate = new Date();
+	  }
+
 
 	public long getShareid() {
 		return shareid;

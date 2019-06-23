@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -25,16 +27,24 @@ public class VersionStuff {
 	@Column(name="versionname")
 	private String versionname;
 	
-	@CreatedDate
 	@Column(name="creationDate")
 	private Date creationDate;
 	
-	@LastModifiedDate
 	@Column(name="updationDate")
 	private Date updationDate;
 	
 	@ManyToOne
 	private FileStuff fileversion;
+	
+	@PrePersist
+	  protected void onCreate() {
+	    creationDate = new Date();
+	  }
+
+	  @PreUpdate
+	  protected void onUpdate() {
+	    updationDate = new Date();
+	  }
 
 	public long getVersionid() {
 		return versionid;

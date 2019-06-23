@@ -10,10 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @Table(name="File")
@@ -27,11 +26,9 @@ public class FileStuff {
 	@Column(name="filename")
 	private String filename;
 	
-	@CreatedDate
 	@Column(name="creationDate")
 	private Date creationDate;
 	
-	@LastModifiedDate
 	@Column(name="updationDate")
 	private Date updationDate;
 	
@@ -43,6 +40,16 @@ public class FileStuff {
 	
 	@OneToMany(mappedBy="fileversion")
 	private List<VersionStuff> versionlist;
+	
+	@PrePersist
+	  protected void onCreate() {
+	    creationDate = new Date();
+	  }
+
+	  @PreUpdate
+	  protected void onUpdate() {
+	    updationDate = new Date();
+	  }
 
 	public long getFileid() {
 		return fileid;
