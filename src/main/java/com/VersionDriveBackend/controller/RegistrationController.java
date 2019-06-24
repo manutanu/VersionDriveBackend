@@ -35,23 +35,33 @@ public class RegistrationController implements ConstantUtils{
 		System.out.println(user.getPassword()+" "+user.getUsername()+" "+obj.encode(user.getPassword()));
 		user.setPassword(obj.encode(user.getPassword()));
 		Map<Object,Object> responseMap=new HashMap<>();
+		UserStuff usernamecheck=userRepository.getUserByUsername(user.getUsername());
+		UserStuff useremailcheck=userRepository.getUserByEmail(user.getEmail());
 		try {
-			userRepository.save(user);
-			user.setRootfolder(user.getUserid()+"@"+user.getUsername());
-			userRepository.save(user);
-			Path rootlocationdir=Paths.get(ROOT_DIR);
-			boolean exists = Files.exists(rootlocationdir);
-			if(exists) {
-				Path userDrivePath = Paths.get(ROOT_DIR+"/"+user.getRootfolder());
-				Files.createDirectory(userDrivePath);
-			}else {
-				Files.createDirectory(rootlocationdir);
-				Path userDrivePath = Paths.get(ROOT_DIR+"/"+user.getRootfolder());
-				Files.createDirectory(userDrivePath);
+			if(usernamecheck==null && useremailcheck==null) {
+				userRepository.save(user);
+				user.setRootfolder(user.getUserid()+"@"+user.getUsername());
+				userRepository.save(user);
+				Path rootlocationdir=Paths.get(ROOT_DIR);
+				boolean exists = Files.exists(rootlocationdir);
+				if(exists) {
+					Path userDrivePath = Paths.get(ROOT_DIR+"/"+user.getRootfolder());
+					Files.createDirectory(userDrivePath);
+				}else {
+					Files.createDirectory(rootlocationdir);
+					Path userDrivePath = Paths.get(ROOT_DIR+"/"+user.getRootfolder());
+					Files.createDirectory(userDrivePath);
+				}
+				long userid=userRepository.getUserByUsername(user.getUsername()).getUserid();
+				responseMap.put("status","SUCCESS");
+				responseMap.put("userid",userid);
+			}else if(usernamecheck!=null){
+				responseMap.put("status","Username");
+				responseMap.put("userid",-1);
+			}else if(useremailcheck!=null) {
+				responseMap.put("status","Useremail");
+				responseMap.put("userid",-1);
 			}
-			long userid=userRepository.getUserByUsername(user.getUsername()).getUserid();
-			responseMap.put("status","SUCCESS");
-			responseMap.put("userid",userid);
 		}catch(Exception e) {
 			e.printStackTrace();
 			responseMap.put("status","ERROR");

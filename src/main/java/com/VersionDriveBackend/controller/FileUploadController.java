@@ -43,7 +43,7 @@ public class FileUploadController {
 	    try {
 	      storageService.store(file,userid);
 	      files.add(file.getOriginalFilename());
-	 
+	    
 	      message = "You successfully uploaded " + file.getOriginalFilename() + "!";
 	      FileStuff fileobj= new FileStuff();
 	      fileobj.setFilename(file.getOriginalFilename());
