@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.VersionDriveBackend.repository.UserRepository;
+
 
 @RestController
 @CrossOrigin
@@ -26,6 +28,9 @@ public class JwtAuthenticationController {
 
 	@Autowired
 	private JwtUserDetailsService userDetailsService;
+	
+	@Autowired
+	private UserRepository userRepository;
 
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
@@ -36,7 +41,8 @@ public class JwtAuthenticationController {
 
 		final String token = jwtTokenUtil.generateToken(userDetails);
 		System.out.println("token is "+token);
-		return ResponseEntity.ok(new JwtResponse(token));
+		long userid=userRepository.getUserByUsername(authenticationRequest.getUsername()).getUserid();
+		return ResponseEntity.ok(new JwtResponse(token,userid));
 	}
 
 	private void authenticate(String username, String password) throws Exception {

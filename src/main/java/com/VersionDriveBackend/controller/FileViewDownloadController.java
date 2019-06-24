@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.VersionDriveBackend.constants.ConstantUtils;
 import com.VersionDriveBackend.model.FileStuff;
+import com.VersionDriveBackend.model.ResponseFileObject;
 import com.VersionDriveBackend.model.UserStuff;
 import com.VersionDriveBackend.repository.FileRepository;
 import com.VersionDriveBackend.repository.UserRepository;
@@ -51,11 +52,12 @@ public class FileViewDownloadController implements ConstantUtils{
 
 	// controller for listing all files
 	@GetMapping("/getallfiles/{userid}")
-	public ResponseEntity<List<String>> getListFiles(Model model, @PathVariable long userid) {
-		List<String> fileNames = new ArrayList<String>();
+	public ResponseEntity<List<ResponseFileObject>> getListFiles(Model model, @PathVariable long userid) {
+		List<ResponseFileObject> fileNames = new ArrayList<>();
 		UserStuff userobject = userRepository.getOne(userid);
 		userobject.getFileList().forEach(filestuff -> {
-			fileNames.add(filestuff.getFilename());
+			ResponseFileObject responob=new ResponseFileObject(filestuff.getFileid(), filestuff.getFilename(), filestuff.getCreationDate(), filestuff.getUpdationDate());
+			fileNames.add(responob);
 		});
 		return ResponseEntity.ok().body(fileNames);
 	}

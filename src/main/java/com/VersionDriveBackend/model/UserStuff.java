@@ -2,8 +2,10 @@ package com.VersionDriveBackend.model;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,7 +32,10 @@ public class UserStuff {
 	@Column(name="rootfolder")
 	private String rootfolder;
 	
-	@OneToMany(mappedBy="user")
+	@Column(name="email")
+	private String email;
+	
+	@OneToMany(mappedBy="user" , fetch = FetchType.LAZY , cascade = CascadeType.ALL)
 	private List<FileStuff> fileList;
 
 	public long getUserid() {
@@ -71,6 +76,14 @@ public class UserStuff {
 
 	public void setFileList(List<FileStuff> fileList) {
 		this.fileList = fileList;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 	
 		
