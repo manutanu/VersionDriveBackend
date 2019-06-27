@@ -7,13 +7,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,9 +33,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.VersionDriveBackend.constants.ConstantUtils;
 import com.VersionDriveBackend.model.FileStuff;
 import com.VersionDriveBackend.model.ResponseFileObject;
+import com.VersionDriveBackend.model.ResponseSharedFileVO;
 import com.VersionDriveBackend.model.Share;
 import com.VersionDriveBackend.model.ShareRequest;
 import com.VersionDriveBackend.model.UserStuff;
+import com.VersionDriveBackend.model.VersionStuff;
 import com.VersionDriveBackend.repository.FileRepository;
 import com.VersionDriveBackend.repository.ShareRepository;
 import com.VersionDriveBackend.repository.UserRepository;
@@ -39,7 +45,7 @@ import com.VersionDriveBackend.service.StorageUtilService;
 
 @Controller
 @RequestMapping("/viewdownload")
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin({"http://localhost:4100","http://localhost:4200"})
 public class FileViewDownloadController implements ConstantUtils{
 
 	@Autowired
@@ -63,13 +69,24 @@ public class FileViewDownloadController implements ConstantUtils{
 	public ResponseEntity<List<ResponseFileObject>> getListFiles(Model model, @PathVariable long userid) {
 		List<ResponseFileObject> fileNames = new ArrayList<>();
 		UserStuff userobject = userRepository.getOne(userid);
+		for(int i=0;i<userobject.getFileList().size();i++) {
+			userobject.getFileList().get(i).setUser(null);
+			for(Share ss:userobject.getFileList().get(i).getSharelist()) {
+				ss.setFileshare(null);
+			}
+			for(VersionStuff vv:userobject.getFileList().get(i).getVersionlist()) {
+				vv.setFileversion(null);
+			}
+		}
 		userobject.getFileList().forEach(filestuff -> {
-			ResponseFileObject responob=new ResponseFileObject(filestuff.getFileid(), filestuff.getFilename(), filestuff.getCreationDate(), filestuff.getUpdationDate());
+			ResponseFileObject responob=new ResponseFileObject(filestuff.getFileid(), filestuff.getFilename(), filestuff.getCreationDate(), filestuff.getUpdationDate(),filestuff.getSharelist(),filestuff.getVersionlist());
 			fileNames.add(responob);
 		});
 		return ResponseEntity.ok().body(fileNames);
 	}
 	
+	
+	// controller for getting files for preview purpose
 	@RequestMapping("/view/{userid}/{fileid}")
 	public void viewResource(HttpServletRequest request, HttpServletResponse response,
 			@PathVariable long fileid, @PathVariable long userid) throws IOException {
@@ -128,14 +145,11 @@ public class FileViewDownloadController implements ConstantUtils{
 
 		}
 	}
-
-	// controller for deleting file
-
-	// controller for showing shared files
-
+	
 	// controller for sharing files
 	@PostMapping("/share/{fileid}")
-	public ResponseEntity<String> shareThisFile(@RequestBody ShareRequest request){
+	public ResponseEntity<?> shareThisFile(@RequestBody ShareRequest request){
+		Map<String,String> responsemap=new HashMap<>();
 		try {
 			System.out.println(request.toString());
 			UserStuff usertobeshared=userRepository.getUserByEmail(request.getToemail());
@@ -147,26 +161,32 @@ public class FileViewDownloadController implements ConstantUtils{
 			sharetransaction.setFileshare(filewhichisshared);
 			sharetransaction.setPermission(request.getPermission());
 			shareRepository.save(sharetransaction);
+			responsemap.put("status","SUCCESS");
 		}catch(Exception e) {
 			e.printStackTrace();
+			responsemap.put("status","ERROR");
 		}
-		return ResponseEntity.ok().body("SUCCESS");
+		//HttpHeaders headers=new HttpHeaders();
+		return new ResponseEntity(HttpStatus.ACCEPTED);
 	}
 	
+	// controller for showing shared files
 	@GetMapping("/shared/{userid}")
-	public ResponseEntity<List<ResponseFileObject>> getSharedFilesOfUser(@PathVariable("userid") long userid ){
-		List<ResponseFileObject> listofsharedfilestothisuser=new ArrayList<>();
+	public ResponseEntity<List<ResponseSharedFileVO>> getSharedFilesOfUser(@PathVariable("userid") long userid ){
+		List<ResponseSharedFileVO> listofsharedfilestothisuser=new ArrayList<>();
 		
 		List<Share> shareobject=shareRepository.getShareByToid(userid);
 		
 		shareobject.forEach(shareo -> {
-			ResponseFileObject responob=new ResponseFileObject(shareo.getFileshare().getFileid(), shareo.getFileshare().getFilename(), shareo.getFileshare().getCreationDate(), shareo.getFileshare().getUpdationDate());
+			UserStuff fromuserobject=userRepository.getOne(shareo.getFromid());
+			ResponseSharedFileVO responob=new ResponseSharedFileVO(shareo.getFileshare().getFileid(), shareo.getFileshare().getFilename(), shareo.getFileshare().getCreationDate(), shareo.getFileshare().getUpdationDate(),shareo.getFromid(),fromuserobject.getUsername(),fromuserobject.getEmail(),shareo.getPermission().toUpperCase());
 			listofsharedfilestothisuser.add(responob);
 		});
 		
 		return ResponseEntity.ok().body(listofsharedfilestothisuser);
 	}
 	
+	//getting all user details for creating typeaheads
 	@GetMapping("/getallUserdetails")
 	public ResponseEntity<List<String>> getAllUserDetails(){
 		List<UserStuff> listofuser=userRepository.findAll();
@@ -177,12 +197,25 @@ public class FileViewDownloadController implements ConstantUtils{
 		return ResponseEntity.ok().body(emaillist);
 	}
 	
-
-	//
+	// controller for deleting file
+	@GetMapping("/deletefile/{userid}/{fileid}")
+	public Map<String, String> deleteThisFile(@PathVariable("userid") long userid , @PathVariable("fileid") long fileid){
+		boolean flag=storageService.deleteFile(userid, fileid);
+		Map<String,String> response = new HashMap<String,String>();
+		if(flag==true) {
+			response.put("status","SUCCESS");
+		}else {
+			response.put("status","ERROR");
+		}
+		return response;
+	}
+	
+	
+	
 
 }
 
-// controller for getting files for preview purpose
+
 //@GetMapping("/view/{userid}/{fileid}")
 //@ResponseBody
 //public ResponseEntity<Resource> getFileForPreview(@PathVariable long fileid, @PathVariable long userid) {

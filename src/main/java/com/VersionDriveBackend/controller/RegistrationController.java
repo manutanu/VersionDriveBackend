@@ -18,7 +18,7 @@ import com.VersionDriveBackend.model.UserStuff;
 import com.VersionDriveBackend.repository.UserRepository;
 
 @RestController
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin({"http://localhost:4100","http://localhost:4200"})
 public class RegistrationController implements ConstantUtils{
 
 	@Autowired

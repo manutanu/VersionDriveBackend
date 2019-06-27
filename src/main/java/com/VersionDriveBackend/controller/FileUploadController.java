@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.VersionDriveBackend.model.FileStuff;
+import com.VersionDriveBackend.model.VersionStuff;
 import com.VersionDriveBackend.repository.FileRepository;
 import com.VersionDriveBackend.repository.UserRepository;
+import com.VersionDriveBackend.repository.VersionRepository;
 import com.VersionDriveBackend.service.StorageUtilService;
 
 @Controller
-@CrossOrigin("http://localhost:4200")
+@CrossOrigin({"http://localhost:4100","http://localhost:4200"})
 public class FileUploadController {
 
 	//controller for storing the upcoming files in the request
@@ -31,6 +33,9 @@ public class FileUploadController {
 	 
 	 @Autowired 
 	 private UserRepository userRepository;
+	 
+	 @Autowired
+	 private VersionRepository versionRepository;
 	 
 	 
 	 
@@ -48,6 +53,7 @@ public class FileUploadController {
 	      FileStuff fileobj= new FileStuff();
 	      fileobj.setFilename(file.getOriginalFilename());
 	      fileobj.setUser(userRepository.getOne(userid));
+	      fileobj.setAtestVersion(1.0);
 	      fileRepository.save(fileobj);
 	      return ResponseEntity.status(HttpStatus.OK).body(message);
 	    } catch (Exception e) {
@@ -56,6 +62,42 @@ public class FileUploadController {
 	    }
 	  }
 	 
-	  
+	//contoller for  upload file versions
+		@PostMapping("/uploadversion/{userid}/{fileid}")
+		public ResponseEntity<String> uploadVersionOfFile(@RequestParam("file") MultipartFile file,@PathVariable long userid , @PathVariable long fileid){
+
+		    String message = "";
+		    try {
+
+		      
+		      //got original file object from database
+		      FileStuff fileobj= fileRepository.getOne(fileid);
+		      fileobj.setAtestVersion(fileobj.getAtestVersion()+1);
+		      StringBuilder nameinreverse=new StringBuilder(fileobj.getFilename());
+		      String nameinreverestring=nameinreverse.reverse().substring(nameinreverse.indexOf(".")+1, nameinreverse.length());
+		      String ext=(new StringBuilder(nameinreverse.substring(0,nameinreverse.indexOf(".")))).reverse().toString();
+		      StringBuilder sb=new StringBuilder(nameinreverestring);
+		      String newfileversionname=sb.reverse().toString()+"v"+fileobj.getAtestVersion()+"."+ext;
+		      System.out.println(newfileversionname);
+		      VersionStuff versionFile=new VersionStuff();
+		      versionFile.setVersionname(newfileversionname);
+		      versionFile.setFileversion(fileobj);
+		      
+		      storageService.storeVersion(file,fileobj.getUser().getUserid(),newfileversionname);
+		      fileRepository.save(fileobj);
+		      versionRepository.save(versionFile);
+		      
+//		      files.add(file.getOriginalFilename());
+		    
+		      message = "You successfully uploaded " + file.getOriginalFilename() +" with name "+ newfileversionname + "!";
+		      
+		      
+		      
+		      return ResponseEntity.status(HttpStatus.OK).body(message);
+		    } catch (Exception e) {
+		      message = "FAIL to upload " + file.getOriginalFilename() + "!";
+		      return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(message);
+		    }
+		}
 	
 }

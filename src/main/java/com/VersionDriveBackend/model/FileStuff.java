@@ -34,6 +34,9 @@ public class FileStuff {
 	@Column(name="updationDate")
 	private Date updationDate;
 	
+	@Column(name="latestVersion")
+	private double atestVersion;
+	
 	@ManyToOne
 	private UserStuff user;
 	
@@ -41,7 +44,7 @@ public class FileStuff {
 	private List<Share> sharelist;
 	
 	
-	@OneToMany(mappedBy="fileversion" , fetch = FetchType.LAZY , cascade = CascadeType.ALL)
+	@OneToMany(mappedBy="fileversion" , fetch = FetchType.LAZY , cascade = {CascadeType.PERSIST,CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH})
 	private List<VersionStuff> versionlist;
 	
 	@PrePersist
@@ -109,7 +112,15 @@ public class FileStuff {
 	public void setVersionlist(List<VersionStuff> versionlist) {
 		this.versionlist = versionlist;
 	}
-	
 
+	public double getAtestVersion() {
+		return atestVersion;
+	}
+
+	public void setAtestVersion(double atestVersion) {
+		this.atestVersion = atestVersion;
+	}
+	
+	
 	
 }

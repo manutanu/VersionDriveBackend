@@ -1,6 +1,7 @@
 package com.VersionDriveBackend.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class ResponseFileObject {
 	
@@ -11,6 +12,28 @@ public class ResponseFileObject {
 	private Date creationDate;
 	
 	private Date updationDate;
+	
+	private List<Share> shareList;
+	
+	private List<VersionStuff> versionList;
+
+	
+	
+	public List<Share> getShareList() {
+		return shareList;
+	}
+
+	public void setShareList(List<Share> shareList) {
+		this.shareList = shareList;
+	}
+
+	public List<VersionStuff> getVersionList() {
+		return versionList;
+	}
+
+	public void setVersionList(List<VersionStuff> versionList) {
+		this.versionList = versionList;
+	}
 
 	public long getFileid() {
 		return fileid;
@@ -44,12 +67,17 @@ public class ResponseFileObject {
 		this.updationDate = updationDate;
 	}
 
-	public ResponseFileObject(long fileid, String filename, Date creationDate, Date updationDate) {
+	
+
+	public ResponseFileObject(long fileid, String filename, Date creationDate, Date updationDate, List<Share> shareList,
+			List<VersionStuff> versionList) {
 		super();
 		this.fileid = fileid;
 		this.filename = filename;
 		this.creationDate = creationDate;
 		this.updationDate = updationDate;
+		this.shareList = shareList;
+		this.versionList = versionList;
 	}
 
 	public ResponseFileObject() {

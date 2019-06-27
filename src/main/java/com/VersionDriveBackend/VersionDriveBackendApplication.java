@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @EnableJpaRepositories({"com.VersionDriveBackend.repository"})
 @ComponentScan({"com.VersionDriveBackend"})
 @EnableJpaAuditing(setDates = true)
-@CrossOrigin("http://localhost:4200")
 public class VersionDriveBackendApplication {
 	
 	public static void main(String[] args) {
