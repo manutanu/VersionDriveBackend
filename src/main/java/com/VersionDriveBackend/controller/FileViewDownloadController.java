@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -79,14 +79,17 @@ public class FileViewDownloadController implements ConstantUtils{
 			}
 		}
 		userobject.getFileList().forEach(filestuff -> {
-			ResponseFileObject responob=new ResponseFileObject(filestuff.getFileid(), filestuff.getFilename(), filestuff.getCreationDate(), filestuff.getUpdationDate(),filestuff.getSharelist(),filestuff.getVersionlist());
+			SimpleDateFormat form=new SimpleDateFormat("dd-MM-YYYY");
+			String dateString=form.format(filestuff.getCreationDate());
+			System.out.println(dateString);
+			ResponseFileObject responob=new ResponseFileObject(filestuff.getFileid(), filestuff.getFilename(), dateString, filestuff.getUpdationDate(),filestuff.getSharelist(),filestuff.getVersionlist());
 			fileNames.add(responob);
 		});
 		return ResponseEntity.ok().body(fileNames);
 	}
 	
 	
-	// controller for getting files for preview purpose
+	// controller for getting files for preview purpose from fileid
 	@RequestMapping("/view/{userid}/{fileid}")
 	public void viewResource(HttpServletRequest request, HttpServletResponse response,
 			@PathVariable long fileid, @PathVariable long userid) throws IOException {
@@ -114,6 +117,36 @@ public class FileViewDownloadController implements ConstantUtils{
 
 		}
 	}
+	
+	// controller for getting Version of files for preview purpose from filename
+		@RequestMapping("/viewversion/{userid}/{filename}")
+		public void viewVersionFile(HttpServletRequest request, HttpServletResponse response,
+				@PathVariable String filename, @PathVariable long userid) throws IOException {
+			UserStuff userObject = userRepository.getOne(userid);
+			File file = new File(ROOT_DIR+"/"+userid+"@"+userObject.getUsername()+"/"+filename);
+			if (file.exists()) {
+				//get the mimetype
+				String mimeType = URLConnection.guessContentTypeFromName(file.getName());
+				if (mimeType == null) {
+					//unknown mimetype so set the mimetype to application/octet-stream
+					mimeType = "application/octet-stream";
+				}
+				response.setContentType(mimeType);
+				response.setHeader("Content-Disposition", String.format("inline; filename=\"" + file.getName() + "\""));
+
+				 //Here we have mentioned it to show as attachment
+				 //response.setHeader("Content-Disposition", String.format("attachment; filename=\"" + file.getName() + "\""));
+
+				response.setContentLength((int) file.length());
+
+				InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+
+				FileCopyUtils.copy(inputStream, response.getOutputStream());
+
+			}
+		}
+	
+	
 	
 
 	// controller for getting files for download purpose
@@ -146,15 +179,57 @@ public class FileViewDownloadController implements ConstantUtils{
 		}
 	}
 	
+	
+	// controller for getting file versions for download purpose using filename
+		@GetMapping("/downloadversion/{userid}/{filename}")
+		@ResponseBody
+		public void downloadFileVersions(HttpServletRequest request, HttpServletResponse response,
+				@PathVariable String filename, @PathVariable long userid) throws IOException {
+			UserStuff userObject = userRepository.getOne(userid);
+			File file = new File(ROOT_DIR+"/"+userid+"@"+userObject.getUsername()+"/"+filename);
+			if (file.exists()) {
+				//get the mimetype
+				String mimeType = URLConnection.guessContentTypeFromName(file.getName());
+				if (mimeType == null) {
+					//unknown mimetype so set the mimetype to application/octet-stream
+					mimeType = "application/octet-stream";
+				}
+				response.setContentType(mimeType);
+				response.setHeader("Content-Disposition", String.format("attachment; filename=\"" + file.getName() + "\""));
+
+				 //Here we have mentioned it to show as attachment
+				 //response.setHeader("Content-Disposition", String.format("attachment; filename=\"" + file.getName() + "\""));
+
+				response.setContentLength((int) file.length());
+
+				InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
+
+				FileCopyUtils.copy(inputStream, response.getOutputStream());
+
+			}
+		}
+	
+	
+	
+	
 	// controller for sharing files
 	@PostMapping("/share/{fileid}")
-	public ResponseEntity<?> shareThisFile(@RequestBody ShareRequest request){
+	@ResponseBody
+	public Map<String,String> shareThisFile(@RequestBody ShareRequest request){
 		Map<String,String> responsemap=new HashMap<>();
 		try {
 			System.out.println(request.toString());
 			UserStuff usertobeshared=userRepository.getUserByEmail(request.getToemail());
 			Optional<UserStuff> uesrwhoshared=userRepository.findById(request.getFromuserid());
 			FileStuff filewhichisshared=fileRepository.getOne(request.getFileid());
+			System.out.println(request.getFromuserid()+" "+usertobeshared.getUserid()+" "+request.getFileid());
+			if(shareRepository.getShareTransaction(request.getFromuserid(), usertobeshared.getUserid(), request.getFileid())!=null) {
+				//return  new ResponseEntity<>("Already", HttpStatus.OK);
+				//return ResponseEntity.accepted().body("Already");
+				//return new ResponseEntity(HttpStatus.CONFLICT);
+				 responsemap.put("status","Already");
+				return responsemap;
+			}
 			Share sharetransaction=new Share();
 			sharetransaction.setFromid(uesrwhoshared.get().getUserid());
 			sharetransaction.setToid(usertobeshared.getUserid());
@@ -167,7 +242,8 @@ public class FileViewDownloadController implements ConstantUtils{
 			responsemap.put("status","ERROR");
 		}
 		//HttpHeaders headers=new HttpHeaders();
-		return new ResponseEntity(HttpStatus.ACCEPTED);
+		//return new ResponseEntity(HttpStatus.ACCEPTED);
+		return responsemap;
 	}
 	
 	// controller for showing shared files

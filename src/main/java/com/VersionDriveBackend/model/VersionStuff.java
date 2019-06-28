@@ -16,35 +16,35 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
-@Table(name="Version")
+@Table(name = "Version")
 public class VersionStuff {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="versionid")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "versionid")
 	private long versionid;
-	
-	@Column(name="versionname")
+
+	@Column(name = "versionname")
 	private String versionname;
-	
-	@Column(name="creationDate")
+
+	@Column(name = "creationDate")
 	private Date creationDate;
-	
-	@Column(name="updationDate")
+
+	@Column(name = "updationDate")
 	private Date updationDate;
-	
+
 	@ManyToOne
 	private FileStuff fileversion;
-	
-	@PrePersist
-	  protected void onCreate() {
-	    creationDate = new Date();
-	  }
 
-	  @PreUpdate
-	  protected void onUpdate() {
-	    updationDate = new Date();
-	  }
+	@PrePersist
+	protected void onCreate() {
+		creationDate = new Date();
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		updationDate = new Date();
+	}
 
 	public long getVersionid() {
 		return versionid;
@@ -86,5 +86,4 @@ public class VersionStuff {
 		this.fileversion = fileversion;
 	}
 
-	
 }

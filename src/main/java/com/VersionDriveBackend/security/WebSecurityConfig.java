@@ -72,5 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	    web.ignoring().antMatchers("/register");
 	    web.ignoring().antMatchers("/viewdownload/view/**");
 	    web.ignoring().antMatchers("/viewdownload/download/**");
+	    web.ignoring().antMatchers("/viewdownload/viewversion/**");
+	    web.ignoring().antMatchers("/viewdownload/downloadversion/**");
 	}
 }

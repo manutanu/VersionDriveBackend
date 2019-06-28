@@ -9,7 +9,7 @@ public class ResponseFileObject {
 	
 	private String filename;
 	
-	private Date creationDate;
+	private String creationDate;
 	
 	private Date updationDate;
 	
@@ -51,11 +51,13 @@ public class ResponseFileObject {
 		this.filename = filename;
 	}
 
-	public Date getCreationDate() {
+	
+
+	public String getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(Date creationDate) {
+	public void setCreationDate(String creationDate) {
 		this.creationDate = creationDate;
 	}
 
@@ -69,8 +71,10 @@ public class ResponseFileObject {
 
 	
 
-	public ResponseFileObject(long fileid, String filename, Date creationDate, Date updationDate, List<Share> shareList,
-			List<VersionStuff> versionList) {
+	
+
+	public ResponseFileObject(long fileid, String filename, String creationDate, Date updationDate,
+			List<Share> shareList, List<VersionStuff> versionList) {
 		super();
 		this.fileid = fileid;
 		this.filename = filename;

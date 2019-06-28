@@ -32,11 +32,15 @@ public class StorageUtilService implements ConstantUtils {
 	Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
 	@Transactional
-	public void store(MultipartFile file,long userid) {
+	public void store(MultipartFile file,long userid,String newname) {
     try {
     UserStuff userObject = userRepository.getOne(userid);
       Path locationOfFile = Paths.get(ROOT_DIR+"/"+userid+"@"+userObject.getUsername());
+      if(newname.equals("")) {
       Files.copy(file.getInputStream(), locationOfFile.resolve(file.getOriginalFilename()));
+      }else {
+    	  Files.copy(file.getInputStream(), locationOfFile.resolve(newname));  
+      }
     } catch (Exception e) {
       throw new RuntimeException("FAIL!");
     }

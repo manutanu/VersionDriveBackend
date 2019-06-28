@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,7 +38,7 @@ public class FileUploadController {
 	 @Autowired
 	 private VersionRepository versionRepository;
 	 
-	 
+	 public static int counter=0;
 	 
 	  List<String> files = new ArrayList<String>();
 	 
@@ -46,21 +47,27 @@ public class FileUploadController {
 		
 	    String message = "";
 	    try {
-	      storageService.store(file,userid);
-	      files.add(file.getOriginalFilename());
-	    
 	      message = "You successfully uploaded " + file.getOriginalFilename() + "!";
 	      FileStuff fileobj= new FileStuff();
 	      fileobj.setFilename(file.getOriginalFilename());
 	      fileobj.setUser(userRepository.getOne(userid));
 	      fileobj.setAtestVersion(1.0);
+	      String newname="";
+	      if(!CollectionUtils.isEmpty(fileRepository.getFileByFilename(file.getOriginalFilename()))) {
+	    	  newname=counter+"@"+file.getOriginalFilename();
+	    	  fileobj.setFilename(newname);
+	    	  counter++;
+	      }
 	      fileRepository.save(fileobj);
+	      storageService.store(file,userid,newname);
+	      files.add(file.getOriginalFilename());
 	      return ResponseEntity.status(HttpStatus.OK).body(message);
 	    } catch (Exception e) {
 	      message = "FAIL to upload " + file.getOriginalFilename() + "!";
 	      return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(message);
 	    }
 	  }
+	  
 	 
 	//contoller for  upload file versions
 		@PostMapping("/uploadversion/{userid}/{fileid}")
