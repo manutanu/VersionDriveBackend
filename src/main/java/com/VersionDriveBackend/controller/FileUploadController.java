@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.VersionDriveBackend.model.FileStuff;
+import com.VersionDriveBackend.model.TransactionManagementStuff;
 import com.VersionDriveBackend.model.VersionStuff;
 import com.VersionDriveBackend.repository.FileRepository;
+import com.VersionDriveBackend.repository.TransactionRepository;
 import com.VersionDriveBackend.repository.UserRepository;
 import com.VersionDriveBackend.repository.VersionRepository;
 import com.VersionDriveBackend.service.StorageUtilService;
@@ -37,6 +39,9 @@ public class FileUploadController {
 	 
 	 @Autowired
 	 private VersionRepository versionRepository;
+	 
+	 @Autowired
+	 private TransactionRepository transactionRepository;
 	 
 	 public static int counter=0;
 	 
@@ -61,6 +66,13 @@ public class FileUploadController {
 	      fileRepository.save(fileobj);
 	      storageService.store(file,userid,newname);
 	      files.add(file.getOriginalFilename());
+	      TransactionManagementStuff transaction=new TransactionManagementStuff();
+			transaction.setActionTaken("UPLOAD");
+			transaction.setFileName(file.getOriginalFilename());
+//			transaction.set(uesrwhoshared.get());
+			transaction.setUserid(userid);
+			transactionRepository.save(transaction);
+	      
 	      return ResponseEntity.status(HttpStatus.OK).body(message);
 	    } catch (Exception e) {
 	      message = "FAIL to upload " + file.getOriginalFilename() + "!";
@@ -98,7 +110,12 @@ public class FileUploadController {
 		    
 		      message = "You successfully uploaded " + file.getOriginalFilename() +" with name "+ newfileversionname + "!";
 		      
-		      
+		      TransactionManagementStuff transaction=new TransactionManagementStuff();
+				transaction.setActionTaken("UPLOADVERSION");
+				transaction.setFileName(newfileversionname);
+//				transaction.set(uesrwhoshared.get());
+				transaction.setUserid(userid);
+				transactionRepository.save(transaction);
 		      
 		      return ResponseEntity.status(HttpStatus.OK).body(message);
 		    } catch (Exception e) {

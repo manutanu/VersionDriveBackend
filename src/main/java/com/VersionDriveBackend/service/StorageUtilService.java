@@ -16,8 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.VersionDriveBackend.constants.ConstantUtils;
 import com.VersionDriveBackend.model.FileStuff;
+import com.VersionDriveBackend.model.TransactionManagementStuff;
 import com.VersionDriveBackend.model.UserStuff;
 import com.VersionDriveBackend.repository.FileRepository;
+import com.VersionDriveBackend.repository.TransactionRepository;
 import com.VersionDriveBackend.repository.UserRepository;
 
 @Service
@@ -28,6 +30,9 @@ public class StorageUtilService implements ConstantUtils {
 	
 	@Autowired
 	private FileRepository fileRepository;
+	
+	@Autowired
+	private TransactionRepository transactionRepository;
 
 	Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -83,6 +88,10 @@ public class StorageUtilService implements ConstantUtils {
     	Path locationOfFile = Paths.get(ROOT_DIR+"/"+userid+"@"+userObject.getUsername()+"/"+fileobj.getFilename());
 		try {
 			FileSystemUtils.deleteRecursively(locationOfFile);
+			TransactionManagementStuff transaction=new TransactionManagementStuff();
+			transaction.setActionTaken("DELETE");
+			transaction.setFileName(fileobj.getFilename());
+			transactionRepository.save(transaction);
 			deleteflag=true;
 		} catch (IOException e) {
 			e.printStackTrace();

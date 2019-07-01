@@ -37,6 +37,7 @@ public class UserStuff {
 	
 	@OneToMany(mappedBy="user" , fetch = FetchType.LAZY , cascade = CascadeType.ALL)
 	private List<FileStuff> fileList;
+	
 
 	public long getUserid() {
 		return userid;
