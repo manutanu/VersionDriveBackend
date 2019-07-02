@@ -9,7 +9,6 @@ import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.VersionDriveBackend.constants.ConstantUtils;
+import com.VersionDriveBackend.model.EmailVO;
 import com.VersionDriveBackend.model.FileStuff;
 import com.VersionDriveBackend.model.ResponseFileObject;
 import com.VersionDriveBackend.model.ResponseSharedFileVO;
@@ -71,6 +73,9 @@ public class FileViewDownloadController implements ConstantUtils{
 	
 	@Autowired
 	private TransactionRepository transactionRepository;
+	
+	@Autowired
+	private JavaMailSender javaMailSender;
 
 	
 
@@ -89,10 +94,7 @@ public class FileViewDownloadController implements ConstantUtils{
 			}
 		}
 		
-		Collections.sort(userobject.getFileList(),new Comparator() {
-
-			@Override
-			public int compare(Object o1, Object o2) {
+		Collections.sort(userobject.getFileList(),(Object o1, Object o2)-> {
 				FileStuff a1=(FileStuff)o1;
 				FileStuff a2=(FileStuff)o2;
 				if(a1.getCreationDate().before(a2.getCreationDate())) {
@@ -102,7 +104,6 @@ public class FileViewDownloadController implements ConstantUtils{
 				}else {
 					return 0;
 				}
-			}
 		});
 		
 		userobject.getFileList().forEach(filestuff -> {
@@ -290,6 +291,15 @@ public class FileViewDownloadController implements ConstantUtils{
 //			transaction.set(uesrwhoshared.get());
 			transaction.setUserid(uesrwhoshared.get().getUserid());
 			transactionRepository.save(transaction);
+			
+			//sending email to the user
+
+			SimpleMailMessage simpleMailMessage= new SimpleMailMessage();
+			simpleMailMessage.setTo(request.getToemail());
+			simpleMailMessage.setSubject(filewhichisshared.getFilename());
+			simpleMailMessage.setText(uesrwhoshared.get().getEmail()+" shared "+filewhichisshared.getFilename()+" To You Please Login to VersionDrive.com to preview , download ... and other options the file");
+			javaMailSender.send(simpleMailMessage);
+			
 		}catch(Exception e) {
 			e.printStackTrace();
 			responsemap.put("status","ERROR");
@@ -366,42 +376,7 @@ public class FileViewDownloadController implements ConstantUtils{
 		return transactionRepository.getAllByuserid(userid);
 	}
 	
-	// controller for sharing version files
-//		@PostMapping("/sharebyversionid/{fileversionid}")
-//		@ResponseBody
-//		public Map<String,String> shareThisFileVersion(@RequestBody ShareVersionRequest request){
-//			Map<String,String> responsemap=new HashMap<>();
-//			try {
-//				System.out.println(request.toString());
-//				UserStuff usertobeshared=userRepository.getUserByEmail(request.getToemail());
-//				Optional<UserStuff> uesrwhoshared=userRepository.findById(request.getFromuserid());
-//				VersionStuff fileversionwhichisshared=versionRepository.getOne(request.getFileversionid());
-//				FileStuff filewhoseversiontobeshared=fileversionwhichisshared.getFileversion();
-//				System.out.println(request.getFromuserid()+" "+usertobeshared.getUserid()+" "+request.getFileversionid());
-//				if(shareRepository.getShareTransaction(request.getFromuserid(), usertobeshared.getUserid(), filewhoseversiontobeshared.getFileid())!=null) {
-//					//return  new ResponseEntity<>("Already", HttpStatus.OK);
-//					//return ResponseEntity.accepted().body("Already");
-//					//return new ResponseEntity(HttpStatus.CONFLICT);
-//					 responsemap.put("status","Already");
-//					return responsemap;
-//				}
-//				Share sharetransaction=new Share();
-//				sharetransaction.setFromid(uesrwhoshared.get().getUserid());
-//				sharetransaction.setToid(usertobeshared.getUserid());
-//				sharetransaction.setFileshare(filewhichisshared);
-//				sharetransaction.setPermission(request.getPermission());
-//				shareRepository.save(sharetransaction);
-//				responsemap.put("status","SUCCESS");
-//			}catch(Exception e) {
-//				e.printStackTrace();
-//				responsemap.put("status","ERROR");
-//			}
-//			//HttpHeaders headers=new HttpHeaders();
-//			//return new ResponseEntity(HttpStatus.ACCEPTED);
-//			return responsemap;
-//		}
 	
-
 }
 
 

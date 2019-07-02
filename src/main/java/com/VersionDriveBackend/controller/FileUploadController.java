@@ -1,7 +1,9 @@
 package com.VersionDriveBackend.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.VersionDriveBackend.model.FileStuff;
@@ -58,7 +61,7 @@ public class FileUploadController {
 	      fileobj.setUser(userRepository.getOne(userid));
 	      fileobj.setAtestVersion(1.0);
 	      String newname="";
-	      if(!CollectionUtils.isEmpty(fileRepository.getFileByFilename(file.getOriginalFilename()))) {
+	      if(!CollectionUtils.isEmpty(fileRepository.getFileByFilename(file.getOriginalFilename(),userid))) {
 	    	  newname=counter+"@"+file.getOriginalFilename();
 	    	  fileobj.setFilename(newname);
 	    	  counter++;
@@ -83,8 +86,9 @@ public class FileUploadController {
 	 
 	//contoller for  upload file versions
 		@PostMapping("/uploadversion/{userid}/{fileid}")
-		public ResponseEntity<String> uploadVersionOfFile(@RequestParam("file") MultipartFile file,@PathVariable long userid , @PathVariable long fileid){
-
+		@ResponseBody
+		public VersionStuff uploadVersionOfFile(@RequestParam("file") MultipartFile file,@PathVariable long userid , @PathVariable long fileid){
+			Map<Object,Object> response=new HashMap<>();
 		    String message = "";
 		    try {
 
@@ -108,7 +112,7 @@ public class FileUploadController {
 		      
 //		      files.add(file.getOriginalFilename());
 		    
-		      message = "You successfully uploaded " + file.getOriginalFilename() +" with name "+ newfileversionname + "!";
+  		      message = "You successfully uploaded " + file.getOriginalFilename() +" with name "+ newfileversionname + "!";
 		      
 		      TransactionManagementStuff transaction=new TransactionManagementStuff();
 				transaction.setActionTaken("UPLOADVERSION");
@@ -117,10 +121,14 @@ public class FileUploadController {
 				transaction.setUserid(userid);
 				transactionRepository.save(transaction);
 		      
-		      return ResponseEntity.status(HttpStatus.OK).body(message);
+				versionFile.setFileversion(null);
+				response.put("object",versionFile);
+				
+		      return versionFile;
 		    } catch (Exception e) {
 		      message = "FAIL to upload " + file.getOriginalFilename() + "!";
-		      return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(message);
+		      e.printStackTrace();
+		      return null;
 		    }
 		}
 	
