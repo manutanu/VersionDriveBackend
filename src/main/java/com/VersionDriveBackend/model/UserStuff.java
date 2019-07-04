@@ -1,3 +1,12 @@
+/*
+* UserStuff
+*  This Class is an Entity for Storing User details in the database
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
 package com.VersionDriveBackend.model;
 
 import java.util.List;
@@ -34,6 +43,9 @@ public class UserStuff {
 	
 	@Column(name="email")
 	private String email;
+	
+	@Column(name="verified")
+	private int verified;
 	
 	@OneToMany(mappedBy="user" , fetch = FetchType.LAZY , cascade = CascadeType.ALL)
 	private List<FileStuff> fileList;
@@ -86,6 +98,17 @@ public class UserStuff {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+	public int getVerified() {
+		return verified;
+	}
+
+	public void setVerified(int verified) {
+		this.verified = verified;
+	}
+
+
+	
 	
 		
 }

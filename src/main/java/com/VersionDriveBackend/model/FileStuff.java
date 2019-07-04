@@ -1,3 +1,11 @@
+/*
+* FileStuff
+* This Class is a Entity for storing File data in database
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
 package com.VersionDriveBackend.model;
 
 import java.util.Date;

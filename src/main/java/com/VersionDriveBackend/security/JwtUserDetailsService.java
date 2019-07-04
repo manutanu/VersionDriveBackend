@@ -1,24 +1,34 @@
+/*
+* JwtUserDetailsService
+*  This class contains a method which uses DB to authenticate User details 
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
+
 package com.VersionDriveBackend.security;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.VersionDriveBackend.constants.ConstantUtils;
 import com.VersionDriveBackend.model.UserStuff;
 import com.VersionDriveBackend.repository.UserRepository;
 
 @Service
-public class JwtUserDetailsService implements UserDetailsService {
+public class JwtUserDetailsService implements UserDetailsService,ConstantUtils {
 
-	@Autowired
-	private PasswordEncoder obj;
+/*	@Autowired
+*	private PasswordEncoder obj;
+*/
 
 	@Autowired
 	private UserRepository userRepository;
@@ -27,7 +37,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
 
-		UserStuff userstuff = userRepository.getUserByUsername(username);
+		UserStuff userstuff = userRepository.getUserByUsernameAndVerified(username,ACTIVATED);
 
 		if (userstuff.getUsername().equals(username)) {
 			return new User(userstuff.getUsername(), userstuff.getPassword(), new ArrayList<>());
@@ -37,6 +47,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 		 
 
 	}
+	
 	/*
 	 * Optional<User> optionaluser=userDataRepository.findByUsername(username);
 	 * System.out.println(optionaluser.get().getUser_password());

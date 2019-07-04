@@ -1,4 +1,14 @@
-package com.VersionDriveBackend.model;
+/*
+* ShareVersionRequest
+*  This Class is an VO for sharing Version of files from one user to another user
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
+
+package com.VersionDriveBackend.dto;
 
 public class ShareVersionRequest {
 	

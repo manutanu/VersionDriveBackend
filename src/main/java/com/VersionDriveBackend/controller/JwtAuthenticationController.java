@@ -1,4 +1,13 @@
-package com.VersionDriveBackend.security;
+/*
+* JwtAuthenticationController
+*  This class contains api to authenticate users using jwt token authentication
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
+package com.VersionDriveBackend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +22,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.VersionDriveBackend.constants.ConstantUtils;
 import com.VersionDriveBackend.repository.UserRepository;
+import com.VersionDriveBackend.security.JwtRequest;
+import com.VersionDriveBackend.security.JwtResponse;
+import com.VersionDriveBackend.security.JwtTokenUtil;
+import com.VersionDriveBackend.security.JwtUserDetailsService;
 
 
 @RestController
 @CrossOrigin
-public class JwtAuthenticationController {
+public class JwtAuthenticationController implements ConstantUtils{
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -41,7 +55,7 @@ public class JwtAuthenticationController {
 
 		final String token = jwtTokenUtil.generateToken(userDetails);
 		System.out.println("token is "+token);
-		long userid=userRepository.getUserByUsername(authenticationRequest.getUsername()).getUserid();
+		long userid=userRepository.getUserByUsernameAndVerified(authenticationRequest.getUsername(),ACTIVATED).getUserid();
 		return ResponseEntity.ok(new JwtResponse(token,userid,authenticationRequest.getUsername()));
 	}
 

@@ -1,3 +1,13 @@
+
+/*
+* Share
+*  This Class is an Entity for saving data of each file share bw users
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
 package com.VersionDriveBackend.model;
 
 import java.util.Date;
@@ -9,10 +19,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-
-import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Table(name="Share")

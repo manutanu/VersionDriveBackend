@@ -1,4 +1,13 @@
-package com.VersionDriveBackend.model;
+/*
+* UserResponseObject
+*  This Class is an VO for Sharing User Data bw UI and backend
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
+package com.VersionDriveBackend.dto;
 
 public class UserResponseObject {
 

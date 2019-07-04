@@ -1,3 +1,12 @@
+/*
+* ConstantUtils
+* This Interface Contains constants which will be used throughout the application
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
 package com.VersionDriveBackend.constants;
 
 import org.springframework.stereotype.Component;
@@ -6,5 +15,9 @@ import org.springframework.stereotype.Component;
 public interface ConstantUtils {
 
 	public final String ROOT_DIR="uploads";
+	
+	public final int ACTIVATED=1;
+	
+	public final int NOT_ACTIVATED=0;
 	
 }

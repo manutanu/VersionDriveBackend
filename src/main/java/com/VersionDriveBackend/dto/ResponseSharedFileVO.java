@@ -1,7 +1,20 @@
-package com.VersionDriveBackend.model;
+
+/*
+* ResponseSharedFileVO
+* This Class is a VO for sending response sharing related apis
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
+
+package com.VersionDriveBackend.dto;
 
 import java.util.Date;
 import java.util.List;
+
+import com.VersionDriveBackend.model.VersionStuff;
 
 public class ResponseSharedFileVO {
 	

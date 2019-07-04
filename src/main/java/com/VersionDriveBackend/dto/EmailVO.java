@@ -1,4 +1,13 @@
-package com.VersionDriveBackend.model;
+/*
+* EmailVO
+* This Class is a VO for carrying data regarding sending email
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
+package com.VersionDriveBackend.dto;
 
 public class EmailVO {
 	

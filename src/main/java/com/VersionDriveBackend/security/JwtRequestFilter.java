@@ -1,3 +1,12 @@
+/*
+* JwtRequestFilter
+*  This class stores logic which runs once for each request and authenticate user
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
 package com.VersionDriveBackend.security;
 
 import java.io.IOException;
@@ -29,13 +38,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws ServletException, IOException {
-
-		final String requestTokenHeader = request.getHeader("Authorization");
-
 		String username = null;
 		String jwtToken = null;
-		// JWT Token is in the form "Bearer token". Remove Bearer word and get
-		// only the Token
+		
+		final String requestTokenHeader = request.getHeader("Authorization");
+
+		
+		/** JWT Token is in the form "Bearer token". Remove Bearer word and get
+		* only the Token
+		*/
 		if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
 			jwtToken = requestTokenHeader.substring(7);
 			try {

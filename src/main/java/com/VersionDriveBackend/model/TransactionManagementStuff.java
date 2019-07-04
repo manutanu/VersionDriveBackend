@@ -1,3 +1,12 @@
+/*
+* TransactionManagementStuff
+*  This Class is an Entity for storing every activity that user make on dashboard
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
 package com.VersionDriveBackend.model;
 
 import java.util.Date;

@@ -1,3 +1,12 @@
+/*
+* ShareRepository
+*  This Interface is a repository for storing Share detailed objects
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
 package com.VersionDriveBackend.repository;
 
 import java.util.List;

@@ -1,7 +1,19 @@
-package com.VersionDriveBackend.model;
+/*
+* ResponseFileObject
+* This Class is a VO for sending response for getAllFiles() related to particular user
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
+package com.VersionDriveBackend.dto;
 
 import java.util.Date;
 import java.util.List;
+
+import com.VersionDriveBackend.model.Share;
+import com.VersionDriveBackend.model.VersionStuff;
 
 public class ResponseFileObject {
 	

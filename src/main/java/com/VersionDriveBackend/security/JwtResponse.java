@@ -1,3 +1,12 @@
+/*
+* JwtResponse
+*  This class acts as VO to hold data which is used in sending response for authentication api
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
 package com.VersionDriveBackend.security;
 
 import java.io.Serializable;

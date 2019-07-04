@@ -1,3 +1,13 @@
+/*
+* JwtAuthenticationEntryPoint
+*  This class contains JWT authentication related methods
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
+
 package com.VersionDriveBackend.security;
 
 import java.io.IOException;

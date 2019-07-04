@@ -1,3 +1,12 @@
+/*
+* VersionRepository
+*  This Interface is a repository for storing Versions of file detailed objects
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
 package com.VersionDriveBackend.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;

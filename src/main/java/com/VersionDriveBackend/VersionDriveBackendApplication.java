@@ -1,14 +1,20 @@
-package com.VersionDriveBackend;
+/*
+* VersionDriveBackend
+* This class Bootstraps whole application
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
+package com.VersionDriveBackend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 @SpringBootApplication
 @EnableJpaRepositories({"com.VersionDriveBackend.repository"})

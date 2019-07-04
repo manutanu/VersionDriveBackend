@@ -1,4 +1,14 @@
-package com.VersionDriveBackend.model;
+/*
+* ShareRequest
+*  This Class is a VO for Modelling JSON of share request
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
+
+package com.VersionDriveBackend.dto;
 
 
 public class ShareRequest {

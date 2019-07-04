@@ -1,3 +1,12 @@
+/*
+* VersionStuff
+*  This Class is an Entity for Storing Version related details of files in the database
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
 package com.VersionDriveBackend.model;
 
 import java.util.Date;

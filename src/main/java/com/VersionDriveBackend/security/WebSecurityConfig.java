@@ -1,3 +1,12 @@
+/*
+* WebSecurityConfig
+*  In this class we mention all apis to be restricted (authenticated) and which apis should not be restricted (authenticated) 
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
 package com.VersionDriveBackend.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +41,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		// configure AuthenticationManager so that it knows from where to load
-		// user for matching credentials
-		// Use BCryptPasswordEncoder
+		/** configure AuthenticationManager so that it knows from where to load
+		* user for matching credentials
+		* Use BCryptPasswordEncoder
+		*/ 
 		auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
 	}
 
@@ -70,6 +80,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 	    web.ignoring().antMatchers("/register");
+	    web.ignoring().antMatchers("/verification/**");
 	    web.ignoring().antMatchers("/viewdownload/view/**");
 	    web.ignoring().antMatchers("/viewdownload/download/**");
 	    web.ignoring().antMatchers("/viewdownload/viewversion/**");

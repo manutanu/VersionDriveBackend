@@ -1,3 +1,12 @@
+/*
+* JwtRequest
+*  This class acts as VO to hold authentication request data
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
 package com.VersionDriveBackend.security;
 
 import java.io.Serializable;
@@ -9,7 +18,7 @@ public class JwtRequest implements Serializable {
 	private String username;
 	private String password;
 	
-	//need default constructor for JSON Parsing
+	/** need default constructor for JSON Parsing*/
 	public JwtRequest()
 	{
 		
