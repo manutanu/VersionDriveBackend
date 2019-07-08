@@ -22,6 +22,7 @@ public class MailSendingServiceImpl implements MailSendingService{
 	@Autowired
 	private JavaMailSender javaMailSender;
 
+	
 //	@Async
 	public Boolean sendMail(String to, String subject, String body) throws MailConnectException {
 		SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
