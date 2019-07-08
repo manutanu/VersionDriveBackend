@@ -26,19 +26,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.VersionDriveBackend.constants.ConstantUtils;
-import com.VersionDriveBackend.model.FileStuff;
-import com.VersionDriveBackend.model.TransactionManagementStuff;
-import com.VersionDriveBackend.model.VersionStuff;
-import com.VersionDriveBackend.service.FileUploadServiceImpl;
+import com.VersionDriveBackend.entity.VersionStuff;
+import com.VersionDriveBackend.service.FileUploadService;
 
 @Controller
-@CrossOrigin({ "http://localhost:4100", "http://localhost:4200" })
+@CrossOrigin({ "http://localhost:4100", "http://localhost:4200","http://192.168.43.195:4200" })
 public class FileUploadController implements ConstantUtils{
 
 	/* controller for storing the upcoming files in the request */
 
 	@Autowired
-	private FileUploadServiceImpl fileUploadServiceImpl;
+	private FileUploadService fileUploadService;
 
 	List<String> files = new ArrayList<String>();
 
@@ -49,7 +47,7 @@ public class FileUploadController implements ConstantUtils{
 		String message = "";
 		Map<String,String> response=new HashMap<>();
 		message=response.get("message");
-		response=fileUploadServiceImpl.uploadingNewFile(file, userid);
+		response=fileUploadService.uploadingNewFile(file, userid);
 		if(response.get("status").equals("ERROR")) {
 			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(message);
 		}else {
@@ -65,7 +63,7 @@ public class FileUploadController implements ConstantUtils{
 			@PathVariable long fileid) {
 		Map<String, String> response = new HashMap<>();
 //		String message = "";
-		VersionStuff version=fileUploadServiceImpl.uploadingVersionOfFile(file,userid,fileid);
+		VersionStuff version=fileUploadService.uploadingVersionOfFile(file,userid,fileid);
 		return version;
 	}
 

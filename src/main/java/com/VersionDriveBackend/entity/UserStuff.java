@@ -7,8 +7,9 @@
 * @authored by Mritunjay Yadav
 */
 
-package com.VersionDriveBackend.model;
+package com.VersionDriveBackend.entity;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -19,9 +20,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="User")
@@ -41,6 +41,9 @@ public class UserStuff {
 	@Column(name="rootfolder")
 	private String rootfolder;
 	
+	@Column(name="creationdate")
+	private Date creationDate;
+	
 	@Column(name="email")
 	private String email;
 	
@@ -50,6 +53,10 @@ public class UserStuff {
 	@OneToMany(mappedBy="user" , fetch = FetchType.LAZY , cascade = CascadeType.ALL)
 	private List<FileStuff> fileList;
 	
+	@PrePersist
+	public void persistCreationDate() {
+		creationDate=new Date();
+	}
 
 	public long getUserid() {
 		return userid;
@@ -105,6 +112,14 @@ public class UserStuff {
 
 	public void setVerified(int verified) {
 		this.verified = verified;
+	}
+
+	public Date getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 
 

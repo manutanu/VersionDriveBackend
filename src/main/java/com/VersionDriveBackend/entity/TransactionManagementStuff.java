@@ -7,7 +7,7 @@
 * @authored by Mritunjay Yadav
 */
 
-package com.VersionDriveBackend.model;
+package com.VersionDriveBackend.entity;
 
 import java.util.Date;
 

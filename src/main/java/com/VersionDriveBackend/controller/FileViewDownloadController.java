@@ -41,25 +41,25 @@ import com.VersionDriveBackend.dto.ResponseFileObject;
 import com.VersionDriveBackend.dto.ResponseSharedFileVO;
 import com.VersionDriveBackend.dto.ShareRequest;
 import com.VersionDriveBackend.dto.UserResponseObject;
-import com.VersionDriveBackend.model.FileStuff;
-import com.VersionDriveBackend.model.TransactionManagementStuff;
-import com.VersionDriveBackend.model.UserStuff;
+import com.VersionDriveBackend.entity.FileStuff;
+import com.VersionDriveBackend.entity.TransactionManagementStuff;
+import com.VersionDriveBackend.entity.UserStuff;
 import com.VersionDriveBackend.service.StorageUtilService;
-import com.VersionDriveBackend.service.ViewShareDownloadServiceImpl;
+import com.VersionDriveBackend.service.ViewShareDownloadService;
 
 @Controller
 @RequestMapping("/viewdownload")
-@CrossOrigin({ "http://localhost:4100", "http://localhost:4200" })
+@CrossOrigin({ "http://localhost:4100", "http://localhost:4200","http://192.168.43.195:4200" })
 public class FileViewDownloadController implements ConstantUtils {
 
 	@Autowired
-	private ViewShareDownloadServiceImpl viewShareDownloadService;
+	private ViewShareDownloadService viewShareDownloadService;
 	
 	@Autowired
 	private StorageUtilService storageService;
 
 
-	/* controller for listing all files */
+	/** controller for listing all files */
 	@GetMapping("/getallfiles/{userid}")
 	public ResponseEntity<List<ResponseFileObject>> getListFiles(Model model, @PathVariable long userid) {
 		List<ResponseFileObject> fileNames = new ArrayList<>();
@@ -99,7 +99,7 @@ public class FileViewDownloadController implements ConstantUtils {
 		}
 	}
 
-	/* controller for getting Version of files for preview purpose from filename */
+	/** controller for getting Version of files for preview purpose from filename */
 	@RequestMapping("/viewversion/{userid}/{filename}")
 	public void viewVersionFile(HttpServletRequest request, HttpServletResponse response, @PathVariable String filename,
 			@PathVariable long userid) throws IOException {
@@ -130,7 +130,7 @@ public class FileViewDownloadController implements ConstantUtils {
 		}
 	}
 
-	/* controller for getting files for download purpose */
+	/** controller for getting files for download purpose */
 	@GetMapping("/download/{userid}/{fileid}")
 	@ResponseBody
 	public void downloadResource(HttpServletRequest request, HttpServletResponse response, @PathVariable long fileid,
@@ -166,7 +166,7 @@ public class FileViewDownloadController implements ConstantUtils {
 
 	}
 
-	/* controller for getting file versions for download purpose using filename */
+	/** controller for getting file versions for download purpose using filename */
 	@GetMapping("/downloadversion/{userid}/{filename}")
 	@ResponseBody
 	public void downloadFileVersions(HttpServletRequest request, HttpServletResponse response,
@@ -199,7 +199,7 @@ public class FileViewDownloadController implements ConstantUtils {
 		}
 	}
 
-	/* controller for sharing files */
+	/** controller for sharing files */
 	@PostMapping("/share/{fileid}")
 	@ResponseBody
 	public Map<String, String> shareThisFile(@RequestBody ShareRequest request) {
@@ -212,7 +212,7 @@ public class FileViewDownloadController implements ConstantUtils {
 		return viewShareDownloadService.shareFileUtility(request);
 	}
 
-	/* controller for showing shared files */
+	/** controller for showing shared files */
 	@GetMapping("/shared/{userid}")
 	public ResponseEntity<List<ResponseSharedFileVO>> getSharedFilesOfUser(@PathVariable("userid") long userid) {
 		List<ResponseSharedFileVO> listofsharedfilestothisuser = new ArrayList<>();
@@ -220,7 +220,7 @@ public class FileViewDownloadController implements ConstantUtils {
 		return ResponseEntity.ok().body(listofsharedfilestothisuser);
 	}
 
-	/* getting all user details for creating typeaheads */
+	/** getting all user details for creating typeaheads */
 	@GetMapping("/getallUserdetails")
 	public ResponseEntity<List<String>> getAllUserDetails() {
 		List<UserStuff> listofuser = viewShareDownloadService.getAllUserByVerified(ACTIVATED);
@@ -231,7 +231,7 @@ public class FileViewDownloadController implements ConstantUtils {
 		return ResponseEntity.ok().body(emaillist);
 	}
 
-	/* controller for getting userdetail for particular user */
+	/** controller for getting userdetail for particular user */
 	@GetMapping("/getUserProfile/{userid}")
 	@ResponseBody
 	public UserResponseObject getUserProfileDetails(@PathVariable long userid) {
@@ -243,12 +243,12 @@ public class FileViewDownloadController implements ConstantUtils {
 		return userStuff;
 	}
 
-	/* controller for deleting file */
+	/** controller for deleting file */
 	@GetMapping("/deletefile/{userid}/{fileid}")
 	public Map<String, String> deleteThisFile(@PathVariable("userid") long userid,
 			@PathVariable("fileid") long fileid) {
 		boolean flag = storageService.deleteFile(userid, fileid);
-
+		System.out.println(userid+" "+fileid);
 		Map<String, String> response = new HashMap<String, String>();
 		if (flag == true) {
 			response.put("status", "SUCCESS");
@@ -259,7 +259,7 @@ public class FileViewDownloadController implements ConstantUtils {
 		return response;
 	}
 
-	/* controller for finding all activities */
+	/** controller for finding all activities */
 	@GetMapping("/activity/{userid}")
 	@ResponseBody
 	public List<TransactionManagementStuff> fetchUserActivity(@PathVariable("userid") long userid) {
@@ -267,11 +267,19 @@ public class FileViewDownloadController implements ConstantUtils {
 		return viewShareDownloadService.getAllByuserid(userid);
 	}
 	
+	/** controller for finding Document history */
 	@GetMapping("/history/{fileid}")
 	@ResponseBody
 	public List<String> documentHistory(@PathVariable long fileid){
 		return null;
-	} 
+	}
+	
+	/** controller for deleting file Versions*/
+	@GetMapping("/deleteVersion/{userid}/{versioname}")
+	@ResponseBody
+	public Map<String,String> deleteFileVersion(@PathVariable long userid, @PathVariable String versioname){
+		return viewShareDownloadService.deleteVersionOfFile(userid, versioname);
+	}
 
 }
 

@@ -7,7 +7,7 @@
 * @authored by Mritunjay Yadav
 */
 
-package com.VersionDriveBackend.model;
+package com.VersionDriveBackend.entity;
 
 import java.util.Date;
 
@@ -17,12 +17,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @Table(name = "Version")
@@ -44,6 +42,9 @@ public class VersionStuff {
 
 	@ManyToOne
 	private FileStuff fileversion;
+	
+	@OneToOne
+	private UserStuff user;
 
 	@PrePersist
 	protected void onCreate() {
@@ -93,6 +94,14 @@ public class VersionStuff {
 
 	public void setFileversion(FileStuff fileversion) {
 		this.fileversion = fileversion;
+	}
+
+	public UserStuff getUser() {
+		return user;
+	}
+
+	public void setUser(UserStuff user) {
+		this.user = user;
 	}
 
 }

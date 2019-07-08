@@ -13,7 +13,7 @@ import java.util.Map;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.VersionDriveBackend.model.VersionStuff;
+import com.VersionDriveBackend.entity.VersionStuff;
 
 public interface FileUploadService {
 

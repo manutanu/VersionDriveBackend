@@ -7,7 +7,7 @@
 * @authored by Mritunjay Yadav
 */
 
-package com.VersionDriveBackend.security;
+package com.VersionDriveBackend.dto;
 
 import java.io.Serializable;
 

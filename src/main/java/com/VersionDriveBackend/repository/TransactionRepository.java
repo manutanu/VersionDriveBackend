@@ -15,7 +15,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.VersionDriveBackend.model.TransactionManagementStuff;
+import com.VersionDriveBackend.entity.TransactionManagementStuff;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<TransactionManagementStuff, Long>{

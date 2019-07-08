@@ -23,15 +23,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.VersionDriveBackend.constants.ConstantUtils;
+import com.VersionDriveBackend.dto.JwtRequest;
+import com.VersionDriveBackend.dto.JwtResponse;
 import com.VersionDriveBackend.repository.UserRepository;
-import com.VersionDriveBackend.security.JwtRequest;
-import com.VersionDriveBackend.security.JwtResponse;
 import com.VersionDriveBackend.security.JwtTokenUtil;
 import com.VersionDriveBackend.security.JwtUserDetailsService;
 
 
 @RestController
-@CrossOrigin
+@CrossOrigin({ "http://localhost:4100", "http://localhost:4200" ,"http://192.168.43.195:4200"})
 public class JwtAuthenticationController implements ConstantUtils{
 
 	@Autowired

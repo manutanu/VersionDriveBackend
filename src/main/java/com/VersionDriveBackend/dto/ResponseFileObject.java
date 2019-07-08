@@ -12,8 +12,8 @@ package com.VersionDriveBackend.dto;
 import java.util.Date;
 import java.util.List;
 
-import com.VersionDriveBackend.model.Share;
-import com.VersionDriveBackend.model.VersionStuff;
+import com.VersionDriveBackend.entity.Share;
+import com.VersionDriveBackend.entity.VersionStuff;
 
 public class ResponseFileObject {
 	

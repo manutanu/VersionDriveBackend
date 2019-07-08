@@ -14,7 +14,7 @@ package com.VersionDriveBackend.dto;
 import java.util.Date;
 import java.util.List;
 
-import com.VersionDriveBackend.model.VersionStuff;
+import com.VersionDriveBackend.entity.VersionStuff;
 
 public class ResponseSharedFileVO {
 	

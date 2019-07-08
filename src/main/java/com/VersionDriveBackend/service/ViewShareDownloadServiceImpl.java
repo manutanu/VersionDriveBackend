@@ -1,3 +1,12 @@
+/*
+* ViewShareDownloadServiceImpl
+* This Class Contains method implementations for View ,download , delete files
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
 package com.VersionDriveBackend.service;
 
 import java.text.SimpleDateFormat;
@@ -14,11 +23,11 @@ import com.VersionDriveBackend.constants.ConstantUtils;
 import com.VersionDriveBackend.dto.ResponseFileObject;
 import com.VersionDriveBackend.dto.ResponseSharedFileVO;
 import com.VersionDriveBackend.dto.ShareRequest;
-import com.VersionDriveBackend.model.FileStuff;
-import com.VersionDriveBackend.model.Share;
-import com.VersionDriveBackend.model.TransactionManagementStuff;
-import com.VersionDriveBackend.model.UserStuff;
-import com.VersionDriveBackend.model.VersionStuff;
+import com.VersionDriveBackend.entity.FileStuff;
+import com.VersionDriveBackend.entity.Share;
+import com.VersionDriveBackend.entity.TransactionManagementStuff;
+import com.VersionDriveBackend.entity.UserStuff;
+import com.VersionDriveBackend.entity.VersionStuff;
 import com.VersionDriveBackend.repository.FileRepository;
 import com.VersionDriveBackend.repository.ShareRepository;
 import com.VersionDriveBackend.repository.TransactionRepository;
@@ -45,6 +54,9 @@ public class ViewShareDownloadServiceImpl implements ViewShareDownloadService,Co
 
 	@Autowired
 	private MailSendingService mailSendingService;
+	
+	@Autowired
+	private StorageUtilService storageUtilServie;
 
 	public List<ResponseFileObject> getAllFilesInSortedOrderOfInsertion(long userid) {
 		List<ResponseFileObject> fileNames = new ArrayList<>();
@@ -57,6 +69,7 @@ public class ViewShareDownloadServiceImpl implements ViewShareDownloadService,Co
 			}
 			for (VersionStuff vv : userob.getFileList().get(i).getVersionlist()) {
 				vv.setFileversion(null);
+				vv.setUser(null);
 			}
 		}
 
@@ -143,16 +156,10 @@ public class ViewShareDownloadServiceImpl implements ViewShareDownloadService,Co
 			sharetransaction.setPermission(request.getPermission());
 			shareRepository.save(sharetransaction);
 			responsemap.put("status", "SUCCESS");
-			TransactionManagementStuff transaction = new TransactionManagementStuff();
-			transaction.setActionTaken("SHARE");
-			transaction.setFileName(filewhichisshared.getFilename());
-			transaction.setToemail(usertobeshared.getEmail());
-			transaction.setFromemail(uesrwhoshared.getEmail());
+			insertTransaction("SHARE",filewhichisshared.getFilename() , usertobeshared.getEmail(), uesrwhoshared.getEmail(),uesrwhoshared.getUserid() );
+			
 			uesrwhoshared.setFileList(null);
-			;
 			// transaction.set(uesrwhoshared.get());
-			transaction.setUserid(uesrwhoshared.getUserid());
-			transactionRepository.save(transaction);
 
 			// sending email to the user
 			String body = uesrwhoshared.getEmail() + " shared " + filewhichisshared.getFilename()
@@ -175,6 +182,7 @@ public class ViewShareDownloadServiceImpl implements ViewShareDownloadService,Co
 			List<VersionStuff> versionList = shareo.getFileshare().getVersionlist();
 			for (VersionStuff versiontemp : versionList) {
 				versiontemp.setFileversion(null);
+				versiontemp.setUser(null);
 			}
 			ResponseSharedFileVO responob = new ResponseSharedFileVO(shareo.getFileshare().getFileid(),
 					shareo.getFileshare().getFilename(), shareo.getFileshare().getCreationDate(),
@@ -193,5 +201,26 @@ public class ViewShareDownloadServiceImpl implements ViewShareDownloadService,Co
 
 	public List<TransactionManagementStuff> getAllByuserid(long userid) {
 		return transactionRepository.getAllByuserid(userid);
+	}
+	
+//	@Transactional
+	public Map<String, String> deleteVersionOfFile(long userid, String versionname) {
+		System.out.println(versionname+"  "+userid);
+		Map<String, String> responseMap = new HashMap<>();
+		try {
+			List<VersionStuff> listOfVersion = versionRepository.findAllByVersionname(versionname, userid);
+			for(int i=0;i<listOfVersion.size();i++) {
+				System.out.println(listOfVersion.get(i).getVersionname()+"  "+listOfVersion.get(i).getFileversion());
+			}
+			
+			versionRepository.deleteAll(listOfVersion);
+			storageUtilServie.deleteFileVersion(userid,versionname);
+			insertTransaction("DELETED VERSION", versionname, null, null, userid);
+			responseMap.put("status", "200");
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseMap.put("status", "400");
+		}
+		return responseMap;
 	}
 }

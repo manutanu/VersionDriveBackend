@@ -18,8 +18,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.VersionDriveBackend.constants.ConstantUtils;
-import com.VersionDriveBackend.model.FileStuff;
-import com.VersionDriveBackend.model.VersionStuff;
+import com.VersionDriveBackend.entity.FileStuff;
+import com.VersionDriveBackend.entity.UserStuff;
+import com.VersionDriveBackend.entity.VersionStuff;
 import com.VersionDriveBackend.repository.FileRepository;
 import com.VersionDriveBackend.repository.UserRepository;
 import com.VersionDriveBackend.repository.VersionRepository;
@@ -44,6 +45,7 @@ public class FileUploadServiceImpl implements FileUploadService, ConstantUtils {
 
 	public static int counter = 0;
 
+//	@Transactional
 	public Map<String, String> uploadingNewFile(MultipartFile file, long userid) {
 		Map<String, String> response = new HashMap<>();
 		String message = "";
@@ -75,12 +77,14 @@ public class FileUploadServiceImpl implements FileUploadService, ConstantUtils {
 		}
 	}
 
+//	@Transactional
 	public VersionStuff uploadingVersionOfFile(MultipartFile file, long userid, long fileid) {
 		String message = "";
 		Map<String, String> response = new HashMap<>();
 
 		try {
-
+			UserStuff userForVersion=userRepository.getUserByUseridAndVerified(userid, ACTIVATED);
+			userForVersion.setFileList(null);
 			/* got original file object from database */
 			FileStuff fileob = fileRepository.getOne(fileid);
 			fileob.setAtestVersion(fileob.getAtestVersion() + 1);
@@ -98,6 +102,7 @@ public class FileUploadServiceImpl implements FileUploadService, ConstantUtils {
 
 			storageService.storeVersion(file, fileob.getUser().getUserid(), newfileversionname);
 			fileRepository.save(fileob);
+			versionFile.setUser(userForVersion);
 			versionRepository.save(versionFile);
 
 			message = "You successfully uploaded " + file.getOriginalFilename() + " with name " + newfileversionname

@@ -14,7 +14,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.VersionDriveBackend.model.UserStuff;
+import com.VersionDriveBackend.entity.UserStuff;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserStuff,Long>{

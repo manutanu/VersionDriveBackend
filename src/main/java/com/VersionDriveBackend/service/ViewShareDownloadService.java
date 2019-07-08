@@ -1,3 +1,12 @@
+/*
+* ViewShareDownloadService
+* This Interface Contains method signature for View ,download , delete files
+*
+* 1.0
+*
+* @authored by Mritunjay Yadav
+*/
+
 package com.VersionDriveBackend.service;
 
 import java.util.List;
@@ -6,9 +15,9 @@ import java.util.Map;
 import com.VersionDriveBackend.dto.ResponseFileObject;
 import com.VersionDriveBackend.dto.ResponseSharedFileVO;
 import com.VersionDriveBackend.dto.ShareRequest;
-import com.VersionDriveBackend.model.FileStuff;
-import com.VersionDriveBackend.model.TransactionManagementStuff;
-import com.VersionDriveBackend.model.UserStuff;
+import com.VersionDriveBackend.entity.FileStuff;
+import com.VersionDriveBackend.entity.TransactionManagementStuff;
+import com.VersionDriveBackend.entity.UserStuff;
 
 public interface ViewShareDownloadService {
 	
@@ -28,4 +37,7 @@ public interface ViewShareDownloadService {
 	
 	public List<TransactionManagementStuff> getAllByuserid(long userid);
 
+	public boolean insertTransaction(String action, String filename, String toemail, String fromemail, long userid);
+
+	public Map<String, String> deleteVersionOfFile(long userid, String versionname) ;
 }

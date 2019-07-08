@@ -14,7 +14,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.VersionDriveBackend.model.FileStuff;
+import com.VersionDriveBackend.entity.FileStuff;
 
 @Repository
 public interface FileRepository extends JpaRepository<FileStuff,Long>{

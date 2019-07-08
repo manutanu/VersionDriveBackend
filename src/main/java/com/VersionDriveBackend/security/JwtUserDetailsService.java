@@ -20,7 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.VersionDriveBackend.constants.ConstantUtils;
-import com.VersionDriveBackend.model.UserStuff;
+import com.VersionDriveBackend.entity.UserStuff;
 import com.VersionDriveBackend.repository.UserRepository;
 
 @Service
