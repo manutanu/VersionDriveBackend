@@ -45,17 +45,30 @@ public class StorageUtilServiceImpl implements StorageUtilService,ConstantUtils 
 
 	Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
+	/**
+	 * Description 
+	 * @param
+	 * @return
+	 * 	 * 
+	 * */
 	@Transactional
 	public void store(MultipartFile file, long userid, String newname) {
+		
 		try {
+			
 			UserStuff userOb = userRepository.getUserByUseridAndVerified(userid, ACTIVATED);
 			Path locationOfFile = Paths.get(ROOT_DIR + "/" + userid + "@" + userOb.getUsername());
+			
 			if (newname.equals("")) {
+				
 				Files.copy(file.getInputStream(), locationOfFile.resolve(file.getOriginalFilename()),StandardCopyOption.REPLACE_EXISTING);
 			} else {
+				
 				Files.copy(file.getInputStream(), locationOfFile.resolve(newname),StandardCopyOption.REPLACE_EXISTING);
 			}
+			
 		} catch (Exception e) {
+			
 			e.printStackTrace();
 			throw new RuntimeException("FAIL!");
 		}

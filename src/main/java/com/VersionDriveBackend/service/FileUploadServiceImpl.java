@@ -77,13 +77,14 @@ public class FileUploadServiceImpl implements FileUploadService, ConstantUtils {
 		}
 	}
 
+	
 //	@Transactional
 	public VersionStuff uploadingVersionOfFile(MultipartFile file, long userid, long fileid) {
 		String message = "";
 		Map<String, String> response = new HashMap<>();
 
 		try {
-			UserStuff userForVersion=userRepository.getUserByUseridAndVerified(userid, ACTIVATED);
+			UserStuff userForVersion = userRepository.getUserByUseridAndVerified(userid, ACTIVATED);
 			userForVersion.setFileList(null);
 			/* got original file object from database */
 			FileStuff fileob = fileRepository.getOne(fileid);

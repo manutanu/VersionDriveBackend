@@ -37,9 +37,9 @@ public class RegistrationController implements ConstantUtils {
 	}
 
 	/* Controller for verifying the user */
-	@GetMapping("/verification/{username}")
-	public String verifyUser(@PathVariable String username) {
-		return registrationService.verificationUtility(username);
+	@GetMapping("/verification/{verificationtoken}")
+	public String verifyUser(@PathVariable String verificationtoken) {
+		return registrationService.verificationUtility(verificationtoken);
 	}
 
 }

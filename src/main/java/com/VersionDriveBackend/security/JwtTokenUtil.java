@@ -19,17 +19,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.VersionDriveBackend.constants.ConstantUtils;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
-public class JwtTokenUtil implements Serializable {
+public class JwtTokenUtil implements Serializable,ConstantUtils {
 
-	private static final long serialVersionUID = -2550185165626007488L;
+//	private static final long serialVersionUID = -2550185165626007488L;
 
-	public static final long JWT_TOKEN_VALIDITY = 24 * 60 * 60;
-
+	
 	@Value("${jwt.secret}")
 	private String secret;
 
