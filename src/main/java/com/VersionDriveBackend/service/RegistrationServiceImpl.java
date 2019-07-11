@@ -20,6 +20,7 @@ import java.util.UUID;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailParseException;
 import org.springframework.mail.MailSendException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,9 +47,13 @@ public class RegistrationServiceImpl implements RegistrationService,ConstantUtil
 	
 	@Autowired
 	private VerificationTokenRepository verificationTokenRepository;
+	
+	@Value("${ROOT_DIR}")
+	private String rootDir;
 
 	public String verificationUtility(String verificationToken) {
 		
+		try {
 		if(!StringUtils.isEmpty(verificationToken)) {
 			VerificationToken tokenObj=verificationTokenRepository.findByToken(verificationToken);
 			UserStuff user=tokenObj.getUser();
@@ -66,6 +71,9 @@ public class RegistrationServiceImpl implements RegistrationService,ConstantUtil
 			
 			return " bad VerificationToken ";
 			
+		}
+		}catch(Exception e) {
+			return " bad VerificationToken ";
 		}
 	}
 /*	StringBuilder sb = new StringBuilder("");
@@ -117,16 +125,16 @@ public class RegistrationServiceImpl implements RegistrationService,ConstantUtil
 						+ tokenString;
 				mailSendingService.sendMail(user.getEmail(), "Verification Mail From VersionDrive.com", body);
 				user.setRootfolder(user.getUserid() + "@" + user.getUsername());
-				Path rootlocationdir = Paths.get(ROOT_DIR);
+				Path rootlocationdir = Paths.get(rootDir);
 				boolean exists = Files.exists(rootlocationdir);
 				if (exists) {
-					Path userDrivePath = Paths.get(ROOT_DIR + "/" + user.getRootfolder());
+					Path userDrivePath = Paths.get(rootDir + "/" + user.getRootfolder());
 					if(!Files.exists(userDrivePath)) {
 						Files.createDirectory(userDrivePath);
 					}
 				} else {
 					Files.createDirectory(rootlocationdir);
-					Path userDrivePath = Paths.get(ROOT_DIR + "/" + user.getRootfolder());
+					Path userDrivePath = Paths.get(rootDir + "/" + user.getRootfolder());
 					Files.createDirectory(userDrivePath);
 				}
 				

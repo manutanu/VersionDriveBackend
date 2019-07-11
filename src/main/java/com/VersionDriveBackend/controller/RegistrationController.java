@@ -24,22 +24,44 @@ import com.VersionDriveBackend.entity.UserStuff;
 import com.VersionDriveBackend.service.RegistrationService;
 
 @RestController
-@CrossOrigin({ "http://localhost:4100", "http://localhost:4200" ,"http://192.168.43.195:4200"})
+@CrossOrigin({ "http://localhost:4100", "http://localhost:4200" ,"http://192.168.1.106:4200"})
 public class RegistrationController implements ConstantUtils {
 	
 	@Autowired
 	private RegistrationService registrationService;
 	
 
+	/**
+	 * @Description  controller for registering user with the website
+	 * 
+	 * @Author Mritunjay Yadav
+	 * @return Map<Object,Object>
+	 * @param UserStuff object
+	 * @Exception 
+	 * 
+	 * */
 	@PostMapping("/register")
 	public Map<Object, Object> registerUser(@RequestBody UserStuff user) {
+		
 		return registrationService.registrationUtility(user);
+	
 	}
 
-	/* Controller for verifying the user */
+	
+	/**
+	 * @Description  Controller for verifying the user 
+	 * 
+	 * @Author Mritunjay Yadav
+	 * @return String
+	 * @param String VerificationToken
+	 * @Exception 
+	 * 
+	 * */
 	@GetMapping("/verification/{verificationtoken}")
 	public String verifyUser(@PathVariable String verificationtoken) {
+	
 		return registrationService.verificationUtility(verificationtoken);
+	
 	}
 
 }

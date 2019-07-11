@@ -31,7 +31,7 @@ import com.VersionDriveBackend.security.JwtUserDetailsService;
 
 
 @RestController
-@CrossOrigin({ "http://localhost:4100", "http://localhost:4200" ,"http://192.168.43.195:4200"})
+@CrossOrigin({ "http://localhost:4100", "http://localhost:4200" ,"http://192.168.1.106:4200"})
 public class JwtAuthenticationController implements ConstantUtils{
 
 	@Autowired
@@ -46,26 +46,58 @@ public class JwtAuthenticationController implements ConstantUtils{
 	@Autowired
 	private UserRepository userRepository;
 
+	/**
+	 * @Description  controller for authenticating user using jwt security module
+	 * 
+	 * @Author Mritunjay Yadav
+	 * @return ResponseEntity of General type
+	 * @param JWTRequest object 
+	 * @Exception Exception
+	 * 
+	 * */
 	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
+		
+		//call autheticate method to authenticate user is present or not in the database
 		System.out.println(authenticationRequest.getUsername()+" "+authenticationRequest.getPassword());
 		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-
+		
+		//using loadUserByUsername method provided by spring security interface to authenticate user from db and generate JWT token
 		final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
-
 		final String token = jwtTokenUtil.generateToken(userDetails);
 		System.out.println("token is "+token);
+		
+		//fetching data for authenticated user to send userid and token in response 
 		long userid=userRepository.getUserByUsernameAndVerified(authenticationRequest.getUsername(),ACTIVATED).getUserid();
 		return ResponseEntity.ok(new JwtResponse(token,userid,authenticationRequest.getUsername()));
+	
 	}
 
+	/**
+	 * @Description  authenticate method used to authenticate user from database using username and password
+	 * 
+	 * @Author Mritunjay Yadav
+	 * @return void
+	 * @param username and password
+	 * @Exception Exception
+	 * 
+	 * */
 	private void authenticate(String username, String password) throws Exception {
+		
 		try {
+			
+			//authenticate user from database 
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+		
 		} catch (DisabledException e) {
+			
 			throw new Exception("USER_DISABLED", e);
+		
 		} catch (BadCredentialsException e) {
+			
 			throw new Exception("INVALID_CREDENTIALS", e);
+		
 		}
+		
 	}
 }

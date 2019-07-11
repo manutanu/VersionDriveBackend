@@ -45,11 +45,23 @@ public class FileUploadServiceImpl implements FileUploadService, ConstantUtils {
 
 	public static int counter = 0;
 
-//	@Transactional
+
+	/**
+	 * @Description  FileUpload Utility method which uploads file in the users drive and save that file object in the database
+	 * 
+	 * @Author Mritunjay Yadav
+	 * @return Map<String , String>
+	 * @param MultipartFile , userid
+	 * @Exception 
+	 * 
+	 * */
 	public Map<String, String> uploadingNewFile(MultipartFile file, long userid) {
+		
 		Map<String, String> response = new HashMap<>();
 		String message = "";
+		
 		try {
+			
 			String newname = "";
 			message = "You successfully uploaded " + file.getOriginalFilename() + "!";
 			FileStuff fileob = new FileStuff();
@@ -58,10 +70,13 @@ public class FileUploadServiceImpl implements FileUploadService, ConstantUtils {
 			fileob.setAtestVersion(1.0);
 
 			if (!CollectionUtils.isEmpty(fileRepository.getFileByFilename(file.getOriginalFilename(), userid))) {
+				
 				newname = counter + "@" + file.getOriginalFilename();
 				fileob.setFilename(newname);
 				counter++;
+			
 			}
+			
 			fileRepository.save(fileob);
 			storageService.store(file, userid, newname);
 //			files.add(file.getOriginalFilename());
@@ -69,12 +84,16 @@ public class FileUploadServiceImpl implements FileUploadService, ConstantUtils {
 			response.put("status", "SUCCESS");
 			response.put("message", message);
 			return response;
+		
 		} catch (Exception e) {
+			
 			message = "FAIL to upload " + file.getOriginalFilename() + "!";
 			response.put("status", "ERROR");
 			response.put("message", message);
 			return response;
+		
 		}
+		
 	}
 
 	

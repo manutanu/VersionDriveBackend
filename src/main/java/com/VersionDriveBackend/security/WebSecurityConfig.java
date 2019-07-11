@@ -41,26 +41,42 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		
 		/** configure AuthenticationManager so that it knows from where to load
 		* user for matching credentials
 		* Use BCryptPasswordEncoder
 		*/ 
 		auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
+	
 	}
 
+	/**
+	 * @Description  PassWordEncoder using BCryptEcoder
+	 * 
+	 * @Author Mritunjay Yadav
+	 * @return PasswordEncoder
+	 * @param 
+	 * @Exception 
+	 * 
+	 * */
 	@Bean
 	public PasswordEncoder passwordEncoder() {
+		
 		return new BCryptPasswordEncoder();
+	
 	}
 
 	@Bean
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
+		
 		return super.authenticationManagerBean();
+	
 	}
 
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
+		
 		// We don't need CSRF for this example
 		httpSecurity.cors().and().csrf().disable()
 				// dont authenticate this particular request
@@ -75,15 +91,29 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		// Add a filter to validate the tokens with every request
 		httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+	
 	}
 	
+	
+	/**
+	 * @Description  Overriding configure method from WebSecurityConfigurerAdapter class
+	 * 
+	 * @Author Mritunjay Yadav
+	 * @return void
+	 * @param WebSecurity 
+	 * @Exception Exception
+	 * 
+	 * */
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-	    web.ignoring().antMatchers("/register");
+	   
+		//ignoring urls which should not be secured 
+		web.ignoring().antMatchers("/register");
 	    web.ignoring().antMatchers("/verification/**");
 	    web.ignoring().antMatchers("/viewdownload/view/**");
 	    web.ignoring().antMatchers("/viewdownload/download/**");
 	    web.ignoring().antMatchers("/viewdownload/viewversion/**");
 	    web.ignoring().antMatchers("/viewdownload/downloadversion/**");
+	
 	}
 }

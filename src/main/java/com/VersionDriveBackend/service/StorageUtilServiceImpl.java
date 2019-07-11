@@ -20,6 +20,7 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +29,6 @@ import com.VersionDriveBackend.constants.ConstantUtils;
 import com.VersionDriveBackend.entity.FileStuff;
 import com.VersionDriveBackend.entity.UserStuff;
 import com.VersionDriveBackend.repository.FileRepository;
-import com.VersionDriveBackend.repository.TransactionRepository;
 import com.VersionDriveBackend.repository.UserRepository;
 
 @Service
@@ -42,6 +42,9 @@ public class StorageUtilServiceImpl implements StorageUtilService,ConstantUtils 
 	
 	@Autowired
 	private ViewShareDownloadService  viewShareDownloadService;
+	
+	@Value("${ROOT_DIR}")
+	private String rootDir;
 
 	Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -57,7 +60,7 @@ public class StorageUtilServiceImpl implements StorageUtilService,ConstantUtils 
 		try {
 			
 			UserStuff userOb = userRepository.getUserByUseridAndVerified(userid, ACTIVATED);
-			Path locationOfFile = Paths.get(ROOT_DIR + "/" + userid + "@" + userOb.getUsername());
+			Path locationOfFile = Paths.get(rootDir + "/" + userid + "@" + userOb.getUsername());
 			
 			if (newname.equals("")) {
 				
@@ -78,7 +81,7 @@ public class StorageUtilServiceImpl implements StorageUtilService,ConstantUtils 
 	public void storeVersion(MultipartFile file, long userid, String fileversionname) {
 		try {
 			UserStuff userOb = userRepository.getUserByUseridAndVerified(userid, ACTIVATED);
-			Path locationOfFile = Paths.get(ROOT_DIR + "/" + userid + "@" + userOb.getUsername());
+			Path locationOfFile = Paths.get(rootDir + "/" + userid + "@" + userOb.getUsername());
 			Files.copy(file.getInputStream(), locationOfFile.resolve(fileversionname),StandardCopyOption.REPLACE_EXISTING);
 		} catch (Exception e) {
 			throw new RuntimeException("FAIL!");
@@ -103,7 +106,7 @@ public class StorageUtilServiceImpl implements StorageUtilService,ConstantUtils 
 		UserStuff userOb = userRepository.getUserByUseridAndVerified(userid, ACTIVATED);
 
 		Path locationOfFile = Paths
-				.get(ROOT_DIR + "/" + userid + "@" + userOb.getUsername() + "/" + fileobj.getFilename());
+				.get(rootDir + "/" + userid + "@" + userOb.getUsername() + "/" + fileobj.getFilename());
 		try {
 			FileSystemUtils.deleteRecursively(locationOfFile);
 			viewShareDownloadService.insertTransaction("DELETED", fileobj.getFilename(), null, null, userid);
@@ -123,7 +126,7 @@ public class StorageUtilServiceImpl implements StorageUtilService,ConstantUtils 
 		UserStuff userOb = userRepository.getUserByUseridAndVerified(userid, ACTIVATED);
 
 		Path locationOfFile = Paths
-				.get(ROOT_DIR + "/" + userid + "@" + userOb.getUsername() + "/" + filename);
+				.get(rootDir + "/" + userid + "@" + userOb.getUsername() + "/" + filename);
 		try {
 			FileSystemUtils.deleteRecursively(locationOfFile);
 			viewShareDownloadService.insertTransaction("DELETED", filename, null, null, userid);

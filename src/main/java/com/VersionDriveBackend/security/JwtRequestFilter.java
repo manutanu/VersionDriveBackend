@@ -35,9 +35,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
 
+	/**
+	 * @Description  this method runs before every request which comes to the application and do authentication and sends it to controller
+	 * 
+	 * @Author Mritunjay Yadav
+	 * @return void
+	 * @param HttpServletRequest , HttpServletResponse and FilterChain
+	 * @Exception ServletException,IOException
+	 * 
+	 * */
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws ServletException, IOException {
+		
 		String username = null;
 		String jwtToken = null;
 		
@@ -48,16 +58,27 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		* only the Token
 		*/
 		if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
+			
 			jwtToken = requestTokenHeader.substring(7);
+			
 			try {
+			
 				username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+			
 			} catch (IllegalArgumentException e) {
+			
 				System.out.println("Unable to get JWT Token");
+			
 			} catch (ExpiredJwtException e) {
+				
 				System.out.println("JWT Token has expired");
+			
 			}
+			
 		} else {
+			
 			logger.warn("JWT Token does not begin with Bearer String");
+		
 		}
 
 		// Once we get the token validate it.
@@ -77,9 +98,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 				// that the current user is authenticated. So it passes the
 				// Spring Security Configurations successfully.
 				SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+			
 			}
+			
 		}
+		
 		chain.doFilter(request, response);
+	
 	}
+	
 
 }

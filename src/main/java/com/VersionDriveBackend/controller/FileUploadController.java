@@ -30,16 +30,23 @@ import com.VersionDriveBackend.entity.VersionStuff;
 import com.VersionDriveBackend.service.FileUploadService;
 
 @Controller
-@CrossOrigin({ "http://localhost:4100", "http://localhost:4200","http://192.168.43.195:4200" })
+@CrossOrigin({ "http://localhost:4100", "http://localhost:4200","http://192.168.1.106:4200" })
 public class FileUploadController implements ConstantUtils{
-
-	/* controller for storing the upcoming files in the request */
 
 	@Autowired
 	private FileUploadService fileUploadService;
 
 	List<String> files = new ArrayList<String>();
 
+	/**
+	 * @Description  controller for uploading file to user drive
+	 * 
+	 * @Author Mritunjay Yadav
+	 * @return ResponseEntity<String>
+	 * @param MultipartFile and userid
+	 * @Exception none
+	 * 
+	 * */
 	@PostMapping("/upload/{userid}")
 	public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file,
 			@PathVariable long userid) {
@@ -48,23 +55,39 @@ public class FileUploadController implements ConstantUtils{
 		Map<String,String> response=new HashMap<>();
 		message=response.get("message");
 		response=fileUploadService.uploadingNewFile(file, userid);
+		
 		if(response.get("status").equals("ERROR")) {
+			
+			//sending response according to the logic
 			return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(message);
+		
 		}else {
+			
+			//sending response according to the logic
 			return ResponseEntity.status(HttpStatus.OK).body(message);
+		
 		}
 			
 	}
 
-	/* contoller for upload file versions */
+	/**
+	 * @Description  contoller for upload file versions into user drive
+	 * 
+	 * @Author Mritunjay Yadav
+	 * @return VersionStuff Object
+	 * @param MultipartFile , userid and fileid
+	 * @Exception none
+	 * 
+	 * */
 	@PostMapping("/uploadversion/{userid}/{fileid}")
 	@ResponseBody
 	public VersionStuff uploadVersionOfFile(@RequestParam("file") MultipartFile file, @PathVariable long userid,
 			@PathVariable long fileid) {
 		Map<String, String> response = new HashMap<>();
-//		String message = "";
+		
 		VersionStuff version=fileUploadService.uploadingVersionOfFile(file,userid,fileid);
 		return version;
+
 	}
 
 }

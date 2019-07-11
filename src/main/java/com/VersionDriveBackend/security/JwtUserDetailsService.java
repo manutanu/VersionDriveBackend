@@ -23,6 +23,7 @@ import com.VersionDriveBackend.constants.ConstantUtils;
 import com.VersionDriveBackend.entity.UserStuff;
 import com.VersionDriveBackend.repository.UserRepository;
 
+
 @Service
 public class JwtUserDetailsService implements UserDetailsService,ConstantUtils {
 
@@ -33,33 +34,34 @@ public class JwtUserDetailsService implements UserDetailsService,ConstantUtils {
 	@Autowired
 	private UserRepository userRepository;
 
+	
+	/**
+	 * @Description  loadUserByUsername method from UserDetailsService is @Overrided
+	 * 
+	 * @Author Mritunjay Yadav
+	 * @return UserDetails
+	 * @param String username
+	 * @Exception UsernameNotFoundException
+	 * 
+	 * */
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
-
+		//fetching userobject from database using username and activated flag
 		UserStuff userstuff = userRepository.getUserByUsernameAndVerified(username,ACTIVATED);
 
-		if (userstuff.getUsername().equals(username)) {
+		if (userstuff!=null) {
+			
+			//if userobject found in the database than return User object 
 			return new User(userstuff.getUsername(), userstuff.getPassword(), new ArrayList<>());
+		
 		} else {
+			
+			//if not found throw UsernameNotFoundException
 			throw new UsernameNotFoundException("User not found with username: " + username);
+		
 		}
 		 
-
 	}
-	
-	/*
-	 * Optional<User> optionaluser=userDataRepository.findByUsername(username);
-	 * System.out.println(optionaluser.get().getUser_password());
-	 * optionaluser.orElseThrow(() -> new UsernameNotFoundException(username +
-	 * " this user is not found !"));
-	 * 
-	 * CustomUserDetails user=optionaluser.map(users -> { return new
-	 * CustomUserDetails(users); }).get();
-	 * 
-	 * //user=new CustomUserDetails(optionaluser.get());
-	 * 
-	 * return user;
-	 */
 
 }

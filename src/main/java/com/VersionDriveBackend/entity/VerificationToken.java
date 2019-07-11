@@ -14,13 +14,16 @@ import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import com.VersionDriveBackend.constants.ConstantUtils;
 
 @Entity
 @Table(name="Token")
 public class VerificationToken implements ConstantUtils{
 
-	
+	@Value("${VERIFICATION_TOKEN_EXPIRATION}")
+	private String expirationOfToken ;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,7 +42,7 @@ public class VerificationToken implements ConstantUtils{
 	public void setExpiryDate() {
 		Calendar cal = Calendar.getInstance();
         cal.setTime(new Timestamp(cal.getTime().getTime()));
-        cal.add(Calendar.MINUTE, EXPIRATION);
+        cal.add(Calendar.MINUTE, Integer.parseInt(expirationOfToken));
         expiryDate= new Date(cal.getTime().getTime());
 	}
 
