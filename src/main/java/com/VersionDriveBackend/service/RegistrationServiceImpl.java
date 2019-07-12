@@ -12,11 +12,15 @@ package com.VersionDriveBackend.service;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.persistence.PrePersist;
+import javax.persistence.Transient;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +36,7 @@ import com.VersionDriveBackend.entity.UserStuff;
 import com.VersionDriveBackend.entity.VerificationToken;
 import com.VersionDriveBackend.repository.UserRepository;
 import com.VersionDriveBackend.repository.VerificationTokenRepository;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Service
 public class RegistrationServiceImpl implements RegistrationService,ConstantUtils{
@@ -50,6 +55,9 @@ public class RegistrationServiceImpl implements RegistrationService,ConstantUtil
 	
 	@Value("${ROOT_DIR}")
 	private String rootDir;
+	
+	@Value("${VERIFICATION_TOKEN_EXPIRATION}")
+	private String expirationOfToken ;
 
 	public String verificationUtility(String verificationToken) {
 		
@@ -119,6 +127,7 @@ public class RegistrationServiceImpl implements RegistrationService,ConstantUtil
 				 String tokenString = UUID.randomUUID().toString();
 				 verificationToken.setToken(tokenString);
 				 verificationToken.setUser(user);
+				 verificationToken.setExpiryDate(setExpiryDate());
 				verificationTokenRepository.save(verificationToken);
 				
 				String body = "Please click on this link to complete verification ==> http://localhost:8080/verification/"
@@ -167,6 +176,16 @@ public class RegistrationServiceImpl implements RegistrationService,ConstantUtil
 			responseMap.put("status", "ERROR");
 		}
 		return responseMap;
+	}
+	
+	
+	
+	public Date setExpiryDate() {
+		Calendar cal = Calendar.getInstance();
+        cal.setTime(new Timestamp(cal.getTime().getTime()));
+        System.out.println(expirationOfToken+" hserer ");
+        cal.add(Calendar.MINUTE, Integer.parseInt(expirationOfToken));
+        return  new Date(cal.getTime().getTime());
 	}
 
 }
