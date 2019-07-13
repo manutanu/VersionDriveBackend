@@ -24,13 +24,24 @@ public class MailSendingServiceImpl implements MailSendingService{
 
 	
 //	@Async
+	/**
+	 * @Description  utility method for sending mails to the email with specified body and subject
+	 * 
+	 * @Author Mritunjay Yadav
+	 * @return Boolean
+	 * @param String to , String subject, String body
+	 * @Exception MailConnectException
+	 * 
+	 * */
 	public Boolean sendMail(String to, String subject, String body) throws MailConnectException {
+		
 		SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
 		simpleMailMessage.setTo(to);
 		simpleMailMessage.setSubject(subject);
 		simpleMailMessage.setText(body);
 		javaMailSender.send(simpleMailMessage);
 		return true;
+	
 	}
 
 }

@@ -97,17 +97,31 @@ public class FileUploadServiceImpl implements FileUploadService, ConstantUtils {
 	}
 
 	
-//	@Transactional
+	/**
+	 * @Description  Method is utility method for uploading versions of file in database and storage
+	 * 
+	 * @Author Mritunjay Yadav
+	 * @return VersionStuff
+	 * @param Multipart file, userid , fileid
+	 * @Exception none
+	 * 
+	 * */
 	public VersionStuff uploadingVersionOfFile(MultipartFile file, long userid, long fileid) {
+		
 		String message = "";
 		Map<String, String> response = new HashMap<>();
 
 		try {
+			
+			//fetch UserDetails using userid and removing backreferences so that recursive fetch doesnt happen
 			UserStuff userForVersion = userRepository.getUserByUseridAndVerified(userid, ACTIVATED);
 			userForVersion.setFileList(null);
-			/* got original file object from database */
+			
+			//get original file object using fileid and incrementing version number for that file in database 
 			FileStuff fileob = fileRepository.getOne(fileid);
 			fileob.setAtestVersion(fileob.getAtestVersion() + 1);
+			
+			//setting name for the new version using main file name and latestversion present in the file object in database
 			StringBuilder nameinreverse = new StringBuilder(fileob.getFilename());
 			String nameinreverestring = nameinreverse.reverse().substring(nameinreverse.indexOf(".") + 1,
 					nameinreverse.length());
@@ -116,29 +130,34 @@ public class FileUploadServiceImpl implements FileUploadService, ConstantUtils {
 			StringBuilder sb = new StringBuilder(nameinreverestring);
 			String newfileversionname = sb.reverse().toString() + "v" + fileob.getAtestVersion() + "." + ext;
 			System.out.println(newfileversionname);
+			
+			//creating version  object to save the entry in database
 			VersionStuff versionFile = new VersionStuff();
 			versionFile.setVersionname(newfileversionname);
 			versionFile.setFileversion(fileob);
 
+			//now after storing object in database now save the file version in the storage
 			storageService.storeVersion(file, fileob.getUser().getUserid(), newfileversionname);
 			fileRepository.save(fileob);
 			versionFile.setUser(userForVersion);
 			versionRepository.save(versionFile);
 
+			//creating message for successfull and error in saving logic
 			message = "You successfully uploaded " + file.getOriginalFilename() + " with name " + newfileversionname
 					+ "!";
 
 			viewShareDownloadServiceImpl.insertTransaction("UPLOADVERSION", newfileversionname, null, null, userid);
-
 			versionFile.setFileversion(null);
-//			response.put("status", "SUCCESS");
-//			response.put("message", message);
+			response.put("status", "SUCCESS");
+
 			return versionFile;
+		
 		} catch (Exception e) {
+			
+			//in case of any exception occurs in saving logic
 			message = "FAIL to upload " + file.getOriginalFilename() + "!";
-//			response.put("status", "ERROR");
-//			response.put("message", message);
 			return null;
+		
 		}
 
 	}
